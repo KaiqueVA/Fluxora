@@ -2,7 +2,7 @@
 
 echo Iniciando container do backend...
 
-docker compose up -d backend
+docker compose up -d db backend
 
 echo Entrando no container...
 
