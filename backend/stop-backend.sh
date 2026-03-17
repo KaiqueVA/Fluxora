@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Parando container do backend..."
+echo "Parando container do database e do backend..."
 
-docker compose stop backend
+docker compose stop db backend
 
-echo "Container do backend parado."
+echo "Container do database e do backend parados."
