@@ -10,7 +10,3 @@ class UserRepositoryInterface(ABC):
     @abstractmethod
     def get_by_email(self, email: str):
         pass
-
-    @abstractmethod
-    def password_valid(self, user, password: str):
-        pass
