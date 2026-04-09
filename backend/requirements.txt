@@ -2,6 +2,7 @@ asgiref==3.11.1
 attrs==26.1.0
 Django==6.0.3
 djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.29.0
 inflection==0.5.1
 jsonschema==4.26.0
@@ -11,6 +12,7 @@ opencv-python==4.13.0.92
 packaging==26.0
 pillow==12.1.1
 psycopg2-binary==2.9.11
+PyJWT==2.12.1
 pytesseract==0.3.13
 PyYAML==6.0.3
 referencing==0.37.0
