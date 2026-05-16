@@ -1,8 +1,10 @@
 from apps.receitas.models import Receita
+from apps.interfaces import UserScopedRepositoryInterface
 
-class ReceitaRepository:
+
+class ReceitaRepository(UserScopedRepositoryInterface):
     
-    def save(self, receita_entity):
+    def create(self, receita_entity):
         return Receita.objects.create(
             description=receita_entity.description,
             value=receita_entity.value,
@@ -10,10 +12,10 @@ class ReceitaRepository:
             user=receita_entity.user
         )
         
-    def find_by_user(self, user):
+    def list_by_user(self, user):
         return Receita.objects.filter(user=user)
     
-    def find_by_id_and_user(self, receita_id, user):
+    def get_by_id_for_user(self, receita_id, user):
         return Receita.objects.filter(
             id=receita_id,
             user=user

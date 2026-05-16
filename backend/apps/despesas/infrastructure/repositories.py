@@ -1,7 +1,8 @@
 from apps.despesas.models import Despesa
+from apps.interfaces import UserScopedRepositoryInterface
 
 
-class DespesaRepository:
+class DespesaRepository(UserScopedRepositoryInterface):
 
     def create(self, despesa_entity):
         return Despesa.objects.create(
