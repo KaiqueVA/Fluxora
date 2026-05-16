@@ -16,9 +16,9 @@ services:
   backend:
     build: ./backend
     container_name: django_backend
-    command: tail -f /dev/null
+    #command: tail -f /dev/null
     # Usar a linha a baixo quando o backend já estiver implantado e comentar a linha acima
-    # command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
