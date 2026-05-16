@@ -6,14 +6,13 @@ from rest_framework.pagination import PageNumberPagination
 
 from drf_spectacular.utils import extend_schema
 
-from apps.despesas.application.services import (
-    CreateDespesaService,
-    ListDespesasService,
-    RetrieveDespesaService,
-    UpdateDespesaService,
-    DeleteDespesaService,
+from apps.despesas.presentation.factories import (
+    create_despesa_service,
+    delete_despesa_service,
+    list_despesas_service,
+    retrieve_despesa_service,
+    update_despesa_service,
 )
-from apps.despesas.infrastructure.repositories import DespesaRepository
 from apps.despesas.presentation.serializers import DespesaSerializer
 from apps.despesas.domain.exceptions import ValidationException, DespesaNotFoundException
 
@@ -28,9 +27,6 @@ class DespesaViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = DespesaPagination
 
-    def get_repository(self):
-        return DespesaRepository()
-
     @extend_schema(
         request=DespesaSerializer,
         responses={201: DespesaSerializer},
@@ -40,7 +36,7 @@ class DespesaViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         try:
-            service = CreateDespesaService(self.get_repository())
+            service = create_despesa_service()
             despesa = service.execute(serializer.validated_data, request.user)
 
             return Response(
@@ -58,7 +54,7 @@ class DespesaViewSet(ViewSet):
         responses={200: DespesaSerializer(many=True)},
     )
     def list(self, request):
-        service = ListDespesasService(self.get_repository())
+        service = list_despesas_service()
         despesas = service.execute(request.user)
 
         paginator = self.pagination_class()
@@ -73,7 +69,7 @@ class DespesaViewSet(ViewSet):
     )
     def retrieve(self, request, pk=None):
         try:
-            service = RetrieveDespesaService(self.get_repository())
+            service = retrieve_despesa_service()
             despesa = service.execute(pk, request.user)
 
             return Response(DespesaSerializer(despesa).data)
@@ -93,7 +89,7 @@ class DespesaViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
 
         try:
-            service = UpdateDespesaService(self.get_repository())
+            service = update_despesa_service()
             despesa = service.execute(pk, serializer.validated_data, request.user)
 
             return Response(DespesaSerializer(despesa).data)
@@ -115,7 +111,7 @@ class DespesaViewSet(ViewSet):
     )
     def destroy(self, request, pk=None):
         try:
-            service = DeleteDespesaService(self.get_repository())
+            service = delete_despesa_service()
             service.execute(pk, request.user)
 
             return Response(status=status.HTTP_204_NO_CONTENT)

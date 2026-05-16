@@ -3,20 +3,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.users.application.services import LoginUserService, RegisterUserService
 from apps.users.domain.exceptions import (
     AuthenticationException,
     UserAlreadyExistsException,
     ValidationException,
 )
-from apps.users.infrastructure.repositories import UserRepository
+from apps.users.presentation.factories import login_user_service, register_user_service
 from apps.users.presentation.serializers import LoginSerializer, RegisterSerializer
 
 
 class RegisterView(APIView):
 
     def get_service(self):
-        return RegisterUserService(UserRepository())
+        return register_user_service()
 
     @extend_schema(
         request=RegisterSerializer,
@@ -50,7 +49,7 @@ class RegisterView(APIView):
 class LoginView(APIView):
 
     def get_service(self):
-        return LoginUserService()
+        return login_user_service()
 
     @extend_schema(
         request=LoginSerializer,
