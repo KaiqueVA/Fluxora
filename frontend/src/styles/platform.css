@@ -1,6 +1,6 @@
 .platform-layout {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: 100vh;
   background: var(--bg-page);
 }
@@ -11,57 +11,147 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 28px;
-  background: #10203a;
+  padding: 26px;
   color: #ffffff;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(127, 214, 196, 0.16), transparent 32%),
+    linear-gradient(180deg, #10203a 0%, #0b1728 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .platform-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  width: fit-content;
   color: #ffffff;
-  font-size: 1.1rem;
+}
+
+.platform-brand div {
+  display: grid;
+  gap: 2px;
+}
+
+.platform-brand strong {
+  font-size: 1.08rem;
   font-weight: 900;
+  line-height: 1;
+}
+
+.platform-brand small {
+  color: #91a3ba;
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 .platform-nav {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   margin-top: 44px;
 }
 
 .platform-nav a {
-  padding: 13px 14px;
-  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
   color: #cbd8e8;
   font-weight: 800;
   transition:
     background-color 160ms ease,
-    color 160ms ease;
+    color 160ms ease,
+    transform 160ms ease;
 }
 
-.platform-nav a:hover,
+.platform-nav a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(2px);
+}
+
 .platform-nav a.active {
   color: #ffffff;
-  background: rgba(127, 214, 196, 0.14);
+  background: rgba(127, 214, 196, 0.16);
 }
 
-.logout-button {
+.platform-nav a.active::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  width: 4px;
+  height: 24px;
+  border-radius: 999px;
+  background: #7fd6c4;
+}
+
+.nav-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 10px;
+  color: #7fd6c4;
+  background: rgba(127, 214, 196, 0.1);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.sidebar-footer {
+  display: grid;
+  gap: 14px;
   margin-top: auto;
-  min-height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 12px;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.sidebar-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7fd6c4;
+  box-shadow: 0 0 0 4px rgba(127, 214, 196, 0.12);
+}
+
+.sidebar-status p {
+  margin: 0;
+  color: #cbd8e8;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
+.logout-button {
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 800;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
 .logout-button:hover {
-  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.11);
+  transform: translateY(-1px);
 }
 
 .platform-content {
+  min-width: 0;
   padding: 36px;
 }
 
@@ -71,6 +161,10 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 32px;
+}
+
+.topbar-heading {
+  min-width: 0;
 }
 
 .platform-topbar h1 {
@@ -95,14 +189,32 @@
   min-height: 42px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0 16px;
   background: var(--bg-surface);
   color: var(--text-muted);
   font-weight: 800;
+  box-shadow: 0 10px 26px rgba(16, 32, 58, 0.04);
+}
+
+.user-pill {
+  gap: 10px;
+  padding: 0 14px 0 8px;
+}
+
+.user-avatar {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .theme-toggle {
   gap: 8px;
+  padding: 0 14px;
   font-size: 0.9rem;
   transition:
     background-color 160ms ease,
@@ -115,6 +227,10 @@
   color: var(--primary);
   border-color: var(--primary);
   transform: translateY(-1px);
+}
+
+.theme-toggle-icon {
+  font-size: 0.95rem;
 }
 
 .dashboard-panel,

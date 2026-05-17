@@ -366,3 +366,54 @@
     padding: 22px;
   }
 }
+
+@media (max-width: 980px) {
+  .platform-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-sidebar {
+    position: static;
+    height: auto;
+    padding: 20px;
+  }
+
+  .platform-nav {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .platform-nav a.active::before {
+    display: none;
+  }
+
+  .sidebar-footer {
+    margin-top: 24px;
+  }
+
+  .platform-content {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .platform-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-toggle,
+  .user-pill {
+    flex: 1;
+  }
+
+  .platform-content {
+    padding: 18px;
+  }
+}
