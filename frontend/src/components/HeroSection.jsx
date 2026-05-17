@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import PhonePreview from './PhonePreview'
 
 function HeroSection() {
@@ -15,9 +16,9 @@ function HeroSection() {
         </p>
 
         <div className="action-row" aria-label="Ações principais">
-          <a className="primary-btn" href="#features">
-            Conhecer funcionalidades
-          </a>
+          <Link className="primary-btn" to="/login">
+            Acessar a plataforma
+          </Link>
         </div>
       </div>
 
