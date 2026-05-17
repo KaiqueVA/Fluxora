@@ -1,6 +1,6 @@
 .platform-layout {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 92px minmax(0, 1fr);
   min-height: 100vh;
   background: var(--bg-page);
 }
@@ -8,23 +8,70 @@
 .platform-sidebar {
   position: sticky;
   top: 0;
+  z-index: 20;
+  width: 92px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 26px;
+  overflow: hidden;
+  padding: 24px 18px;
   color: #ffffff;
   background:
     radial-gradient(circle at 10% 0%, rgba(127, 214, 196, 0.16), transparent 32%),
     linear-gradient(180deg, #10203a 0%, #0b1728 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 18px 0 38px rgba(16, 32, 58, 0.08);
+  transition:
+    width 220ms ease,
+    padding 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.platform-sidebar:hover,
+.platform-sidebar:focus-within {
+  width: 280px;
+  padding: 26px;
+  box-shadow: 24px 0 54px rgba(16, 32, 58, 0.18);
 }
 
 .platform-brand {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  width: fit-content;
+  width: 100%;
+  min-height: 42px;
   color: #ffffff;
+}
+
+.platform-brand .brand-mark {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+}
+
+.brand-text,
+.nav-label,
+.sidebar-status p,
+.logout-label {
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    width 160ms ease;
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .brand-text,
+.platform-sidebar:not(:hover):not(:focus-within) .nav-label,
+.platform-sidebar:not(:hover):not(:focus-within) .sidebar-status p,
+.platform-sidebar:not(:hover):not(:focus-within) .logout-label {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-8px);
 }
 
 .platform-brand div {
@@ -46,7 +93,7 @@
 
 .platform-nav {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin-top: 44px;
 }
 
@@ -55,9 +102,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 46px;
+  min-height: 50px;
   padding: 0 14px;
-  border-radius: 14px;
+  border-radius: 16px;
   color: #cbd8e8;
   font-weight: 800;
   transition:
@@ -66,10 +113,20 @@
     transform 160ms ease;
 }
 
+.platform-sidebar:not(:hover):not(:focus-within) .platform-nav a {
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
+
 .platform-nav a:hover {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.07);
   transform: translateX(2px);
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .platform-nav a:hover {
+  transform: translateX(0);
 }
 
 .platform-nav a.active {
@@ -82,21 +139,45 @@
   position: absolute;
   left: -26px;
   width: 4px;
-  height: 24px;
+  height: 26px;
   border-radius: 999px;
   background: #7fd6c4;
 }
 
+.platform-sidebar:not(:hover):not(:focus-within) .platform-nav a.active::before {
+  display: none;
+}
+
 .nav-icon {
   display: grid;
-  width: 28px;
-  height: 28px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   place-items: center;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #7fd6c4;
   background: rgba(127, 214, 196, 0.1);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 900;
+  transition:
+    width 180ms ease,
+    height 180ms ease,
+    font-size 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .nav-icon {
+  flex-basis: 46px;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  font-size: 1.35rem;
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .platform-nav a.active .nav-icon {
+  color: #ffffff;
+  background: rgba(127, 214, 196, 0.22);
 }
 
 .sidebar-footer {
@@ -116,7 +197,13 @@
   background: rgba(255, 255, 255, 0.045);
 }
 
-.sidebar-status span {
+.platform-sidebar:not(:hover):not(:focus-within) .sidebar-status {
+  justify-content: center;
+  padding: 0;
+}
+
+.status-dot {
+  flex: 0 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -132,7 +219,11 @@
 }
 
 .logout-button {
-  min-height: 44px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   color: #ffffff;
@@ -142,6 +233,19 @@
     background-color 160ms ease,
     border-color 160ms ease,
     transform 160ms ease;
+}
+
+.logout-icon {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .logout-button {
+  padding: 0;
+}
+
+.platform-sidebar:not(:hover):not(:focus-within) .logout-icon {
+  font-size: 1.35rem;
 }
 
 .logout-button:hover {

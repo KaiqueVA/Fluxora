@@ -39,7 +39,7 @@ function Sidebar() {
       <NavLink className="platform-brand" to="/dashboard">
         <span className="brand-mark">F</span>
 
-        <div>
+        <div className="brand-text">
           <strong>Fluxora</strong>
           <small>Finance Platform</small>
         </div>
@@ -47,21 +47,22 @@ function Sidebar() {
 
       <nav className="platform-nav" aria-label="Navegação principal">
         {navItems.map((item) => (
-          <NavLink key={item.path} to={item.path}>
+          <NavLink key={item.path} to={item.path} title={item.label}>
             <span className="nav-icon">{item.icon}</span>
-            <span>{item.label}</span>
+            <span className="nav-label">{item.label}</span>
           </NavLink>
         ))}
       </nav>
 
       <div className="sidebar-footer">
         <div className="sidebar-status">
-          <span></span>
+          <span className="status-dot"></span>
           <p>Sessão ativa</p>
         </div>
 
         <button className="logout-button" type="button" onClick={handleLogout}>
-          Sair da plataforma
+          <span className="logout-icon">↩</span>
+          <span className="logout-label">Sair da plataforma</span>
         </button>
       </div>
     </aside>
