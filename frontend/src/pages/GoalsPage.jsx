@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import PlatformLayout from '../components/platform/PlatformLayout'
 import Topbar from '../components/platform/Topbar'
-import { despesasService, receitasService } from '../components/services/api'
+import { metasService, saldoService } from '../components/services/api'
 
 const emptyForm = {
   title: '',
@@ -25,7 +25,7 @@ function formatDate(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR')
 }
 
-function normalizeCurrencyValue(value) {
+function normalizeNumber(value) {
   const numberValue = Number(value)
 
   if (Number.isNaN(numberValue)) {
@@ -33,6 +33,27 @@ function normalizeCurrencyValue(value) {
   }
 
   return numberValue
+}
+
+function mapGoalFromApi(goal) {
+  return {
+    id: goal.id,
+    title: goal.name,
+    description: goal.description || '',
+    targetValue: normalizeNumber(goal.target_value),
+    deadline: goal.deadline,
+    createdAt: goal.created_at,
+    updatedAt: goal.updated_at,
+  }
+}
+
+function mapGoalToApiPayload(goal) {
+  return {
+    name: goal.title.trim(),
+    description: goal.description.trim() || null,
+    target_value: Number(goal.targetValue).toFixed(2),
+    deadline: goal.deadline,
+  }
 }
 
 function calculateProgress(targetValue, currentBalance) {
@@ -137,42 +158,50 @@ function GoalsPage() {
   const [formData, setFormData] = useState(emptyForm)
   const [editingGoalId, setEditingGoalId] = useState(null)
   const [message, setMessage] = useState('')
+  const [pageError, setPageError] = useState('')
   const [isFormVisible, setIsFormVisible] = useState(false)
   const [expandedGoalIds, setExpandedGoalIds] = useState([])
   const [currentBalance, setCurrentBalance] = useState(0)
   const [isBalanceLoading, setIsBalanceLoading] = useState(true)
-  const [balanceError, setBalanceError] = useState('')
+  const [isGoalsLoading, setIsGoalsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  async function loadGoals() {
+    try {
+      setIsGoalsLoading(true)
+      setPageError('')
+
+      const data = await metasService.list()
+      const normalizedGoals = Array.isArray(data)
+        ? data.map(mapGoalFromApi)
+        : data?.results?.map(mapGoalFromApi) || []
+
+      setGoals(normalizedGoals)
+    } catch (error) {
+      setPageError(error.message || 'Não foi possível carregar as metas.')
+    } finally {
+      setIsGoalsLoading(false)
+    }
+  }
+
+  async function loadBalance() {
+    try {
+      setIsBalanceLoading(true)
+      setPageError('')
+
+      const data = await saldoService.get()
+
+      setCurrentBalance(normalizeNumber(data?.saldo))
+    } catch (error) {
+      setPageError(error.message || 'Não foi possível carregar o saldo atual.')
+    } finally {
+      setIsBalanceLoading(false)
+    }
+  }
 
   useEffect(() => {
-    async function loadBalanceData() {
-      try {
-        setIsBalanceLoading(true)
-        setBalanceError('')
-
-        const [receitas, despesas] = await Promise.all([
-          receitasService.list(),
-          despesasService.list(),
-        ])
-
-        const totalReceitas = receitas.reduce((total, receita) => {
-          return total + normalizeCurrencyValue(receita.value)
-        }, 0)
-
-        const totalDespesas = despesas.reduce((total, despesa) => {
-          return total + normalizeCurrencyValue(despesa.value)
-        }, 0)
-
-        setCurrentBalance(totalReceitas - totalDespesas)
-      } catch (error) {
-        setBalanceError(
-          error.message || 'Não foi possível carregar o saldo atual.',
-        )
-      } finally {
-        setIsBalanceLoading(false)
-      }
-    }
-
-    loadBalanceData()
+    loadGoals()
+    loadBalance()
   }, [])
 
   const goalsWithProgress = useMemo(() => {
@@ -265,7 +294,7 @@ function GoalsPage() {
     })
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
 
     const numericTargetValue = Number(formData.targetValue)
@@ -288,42 +317,43 @@ function GoalsPage() {
       return
     }
 
-    const goalPayload = {
-      title: formData.title.trim(),
-      targetValue: numericTargetValue,
-      deadline: formData.deadline,
-      description: formData.description.trim(),
-    }
+    try {
+      setIsSubmitting(true)
+      setMessage('')
+      setPageError('')
 
-    if (editingGoalId) {
-      setGoals((currentGoals) =>
-        currentGoals.map((goal) =>
-          goal.id === editingGoalId
-            ? {
-                ...goal,
-                ...goalPayload,
-              }
-            : goal,
-        ),
-      )
+      const payload = mapGoalToApiPayload(formData)
 
-      setMessage('Meta atualizada com sucesso.')
-      setEditingGoalId(null)
+      if (editingGoalId) {
+        const updatedGoal = await metasService.update(editingGoalId, payload)
+
+        setGoals((currentGoals) =>
+          currentGoals.map((goal) =>
+            goal.id === editingGoalId ? mapGoalFromApi(updatedGoal) : goal,
+          ),
+        )
+
+        setMessage('Meta atualizada com sucesso.')
+        setEditingGoalId(null)
+        setFormData(emptyForm)
+        setIsFormVisible(false)
+        return
+      }
+
+      const createdGoal = await metasService.create(payload)
+      const normalizedGoal = mapGoalFromApi(createdGoal)
+
+      setGoals((currentGoals) => [normalizedGoal, ...currentGoals])
+      setExpandedGoalIds((currentIds) => [normalizedGoal.id, ...currentIds])
       setFormData(emptyForm)
+      setMessage('Meta criada com sucesso.')
       setIsFormVisible(false)
-      return
+    } catch (error) {
+      setMessage(error.message || 'Não foi possível salvar a meta.')
+      setIsFormVisible(true)
+    } finally {
+      setIsSubmitting(false)
     }
-
-    const newGoal = {
-      id: Date.now(),
-      ...goalPayload,
-    }
-
-    setGoals((currentGoals) => [newGoal, ...currentGoals])
-    setExpandedGoalIds((currentIds) => [newGoal.id, ...currentIds])
-    setFormData(emptyForm)
-    setMessage('Meta criada com sucesso.')
-    setIsFormVisible(false)
   }
 
   function handleEdit(goal) {
@@ -348,21 +378,28 @@ function GoalsPage() {
     scrollToForm()
   }
 
-  function handleRemove(goalId) {
-    setGoals((currentGoals) => {
-      return currentGoals.filter((goal) => goal.id !== goalId)
-    })
+  async function handleRemove(goalId) {
+    try {
+      setPageError('')
+      await metasService.remove(goalId)
 
-    setExpandedGoalIds((currentIds) => {
-      return currentIds.filter((id) => id !== goalId)
-    })
+      setGoals((currentGoals) => {
+        return currentGoals.filter((goal) => goal.id !== goalId)
+      })
 
-    if (editingGoalId === goalId) {
-      resetForm()
-      setIsFormVisible(false)
+      setExpandedGoalIds((currentIds) => {
+        return currentIds.filter((id) => id !== goalId)
+      })
+
+      if (editingGoalId === goalId) {
+        resetForm()
+        setIsFormVisible(false)
+      }
+
+      setMessage('Meta removida.')
+    } catch (error) {
+      setPageError(error.message || 'Não foi possível remover a meta.')
     }
-
-    setMessage('Meta removida.')
   }
 
   const balanceText = isBalanceLoading
@@ -398,13 +435,15 @@ function GoalsPage() {
           </button>
         </article>
 
-        {balanceError && <p className="goals-message">{balanceError}</p>}
+        {pageError && <p className="goals-message">{pageError}</p>}
+
+        {!isFormVisible && message && <p className="goals-message">{message}</p>}
 
         <section className="goals-summary-grid">
           <article className="goals-summary-card is-balance">
             <span>Saldo atual</span>
             <strong>{balanceText}</strong>
-            <p>Calculado com base em receitas e despesas cadastradas.</p>
+            <p>Calculado pelo endpoint de saldo.</p>
           </article>
 
           <article className="goals-summary-card">
@@ -538,19 +577,30 @@ function GoalsPage() {
                 />
               </label>
 
-              {message && <p className="goals-message">{message}</p>}
+              {message && isFormVisible && (
+                <p className="goals-message">{message}</p>
+              )}
 
               <div className="goals-form-actions">
                 <button
                   className="goals-secondary-button"
                   type="button"
                   onClick={handleCloseForm}
+                  disabled={isSubmitting}
                 >
                   Cancelar
                 </button>
 
-                <button className="primary-btn" type="submit">
-                  {editingGoalId ? 'Salvar alterações' : 'Criar meta'}
+                <button
+                  className="primary-btn"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? 'Salvando...'
+                    : editingGoalId
+                      ? 'Salvar alterações'
+                      : 'Criar meta'}
                 </button>
               </div>
             </form>
@@ -572,7 +622,9 @@ function GoalsPage() {
               </button>
             </div>
 
-            {goalsWithProgress.length === 0 ? (
+            {isGoalsLoading ? (
+              <p className="goals-empty">Carregando metas...</p>
+            ) : goalsWithProgress.length === 0 ? (
               <p className="goals-empty">
                 Nenhuma meta cadastrada até o momento. Crie uma nova meta para
                 acompanhar seu progresso financeiro.

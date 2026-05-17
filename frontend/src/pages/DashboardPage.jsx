@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PlatformLayout from '../components/platform/PlatformLayout'
 import Topbar from '../components/platform/Topbar'
-import { receitasService, despesasService } from '../components/services/api'
+import {
+  despesasService,
+  metasService,
+  receitasService,
+  saldoService,
+} from '../components/services/api'
 
 function formatCurrency(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
@@ -18,9 +24,67 @@ function formatDate(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR')
 }
 
+function normalizeApiList(data) {
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  return data?.results || []
+}
+
+function normalizeNumber(value) {
+  const numberValue = Number(value)
+
+  if (Number.isNaN(numberValue)) {
+    return 0
+  }
+
+  return numberValue
+}
+
+function mapGoalFromApi(goal) {
+  return {
+    id: goal.id,
+    title: goal.name,
+    description: goal.description || '',
+    targetValue: normalizeNumber(goal.target_value),
+    deadline: goal.deadline,
+  }
+}
+
+function calculateGoalProgress(targetValue, currentBalance) {
+  if (!targetValue || Number(targetValue) <= 0) {
+    return 0
+  }
+
+  const progress = (currentBalance / Number(targetValue)) * 100
+
+  if (progress < 0) {
+    return 0
+  }
+
+  if (progress > 100) {
+    return 100
+  }
+
+  return progress
+}
+
+function getRemainingValue(targetValue, currentBalance) {
+  const remainingValue = Number(targetValue || 0) - currentBalance
+
+  if (remainingValue <= 0) {
+    return 0
+  }
+
+  return remainingValue
+}
+
 function DashboardPage() {
   const [receitas, setReceitas] = useState([])
   const [despesas, setDespesas] = useState([])
+  const [goals, setGoals] = useState([])
+  const [saldoData, setSaldoData] = useState(null)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -29,18 +93,18 @@ function DashboardPage() {
       setIsLoading(true)
       setError('')
 
-      const [receitasData, despesasData] = await Promise.all([
-        receitasService.list(),
-        despesasService.list(),
-      ])
+      const [receitasData, despesasData, metasData, saldoResponse] =
+        await Promise.all([
+          receitasService.list(),
+          despesasService.list(),
+          metasService.list(),
+          saldoService.get(),
+        ])
 
-      setReceitas(
-        Array.isArray(receitasData) ? receitasData : receitasData.results || [],
-      )
-
-      setDespesas(
-        Array.isArray(despesasData) ? despesasData : despesasData.results || [],
-      )
+      setReceitas(normalizeApiList(receitasData))
+      setDespesas(normalizeApiList(despesasData))
+      setGoals(normalizeApiList(metasData).map(mapGoalFromApi))
+      setSaldoData(saldoResponse)
     } catch (error) {
       setError(error.message)
     } finally {
@@ -52,25 +116,65 @@ function DashboardPage() {
     loadDashboardData()
   }, [])
 
-  const totalReceitas = receitas.reduce((total, receita) => {
-    return total + Number(receita.value || 0)
-  }, 0)
+  const totalReceitas = saldoData
+    ? normalizeNumber(saldoData.total_receitas)
+    : receitas.reduce((total, receita) => {
+        return total + normalizeNumber(receita.value)
+      }, 0)
 
-  const totalDespesas = despesas.reduce((total, despesa) => {
-    return total + Number(despesa.value || 0)
-  }, 0)
+  const totalDespesas = saldoData
+    ? normalizeNumber(saldoData.total_despesas)
+    : despesas.reduce((total, despesa) => {
+        return total + normalizeNumber(despesa.value)
+      }, 0)
 
-  const saldoAtual = totalReceitas - totalDespesas
+  const saldoAtual = saldoData
+    ? normalizeNumber(saldoData.saldo)
+    : totalReceitas - totalDespesas
 
   const comprometimento =
     totalReceitas > 0 ? (totalDespesas / totalReceitas) * 100 : 0
 
   const ticketMedio = despesas.length > 0 ? totalDespesas / despesas.length : 0
 
+  const goalsWithProgress = useMemo(() => {
+    return goals.map((goal) => {
+      const progress = calculateGoalProgress(goal.targetValue, saldoAtual)
+      const remainingValue = getRemainingValue(goal.targetValue, saldoAtual)
+
+      return {
+        ...goal,
+        progress,
+        remainingValue,
+      }
+    })
+  }, [goals, saldoAtual])
+
+  const activeGoals = goalsWithProgress.filter((goal) => {
+    return goal.progress < 100
+  })
+
+  const featuredGoal = useMemo(() => {
+    if (activeGoals.length === 0) {
+      return goalsWithProgress[0] || null
+    }
+
+    return [...activeGoals]
+      .filter((goal) => goal.deadline)
+      .sort((a, b) => {
+        return (
+          new Date(`${a.deadline}T00:00:00`) -
+          new Date(`${b.deadline}T00:00:00`)
+        )
+      })[0]
+  }, [activeGoals, goalsWithProgress])
+
+  const visibleGoals = goalsWithProgress.slice(0, 2)
+
   const categoryExpenses = useMemo(() => {
     const groupedExpenses = despesas.reduce((accumulator, despesa) => {
       const category = despesa.category || 'Sem categoria'
-      const value = Number(despesa.value || 0)
+      const value = normalizeNumber(despesa.value)
 
       accumulator[category] = (accumulator[category] || 0) + value
 
@@ -100,7 +204,7 @@ function DashboardPage() {
       type: 'income',
       description: receita.description,
       category: 'Receita',
-      value: Number(receita.value || 0),
+      value: normalizeNumber(receita.value),
       date: receita.date,
     }))
 
@@ -109,7 +213,7 @@ function DashboardPage() {
       type: 'expense',
       description: despesa.description,
       category: despesa.category,
-      value: Number(despesa.value || 0),
+      value: normalizeNumber(despesa.value),
       date: despesa.date,
     }))
 
@@ -121,6 +225,12 @@ function DashboardPage() {
   }, [receitas, despesas])
 
   function getInsightMessage() {
+    if (featuredGoal) {
+      return `Seu saldo atual cobre ${featuredGoal.progress.toFixed(
+        0,
+      )}% da sua meta principal: ${featuredGoal.title}.`
+    }
+
     if (receitas.length === 0 && despesas.length === 0) {
       return 'Cadastre receitas e despesas para visualizar sua saúde financeira.'
     }
@@ -163,14 +273,88 @@ function DashboardPage() {
             <h2>{getInsightMessage()}</h2>
           </div>
 
-          <div className="clean-balance">
-            <span>Saldo atual</span>
-            <strong>{formatCurrency(saldoAtual)}</strong>
+          <div className="clean-hero-stats">
+            <div className="clean-hero-stat">
+              <span>Saldo atual</span>
+              <strong>{formatCurrency(saldoAtual)}</strong>
+            </div>
+
+            <div className="clean-hero-stat">
+              <span>Despesas</span>
+              <strong className="negative">{formatCurrency(totalDespesas)}</strong>
+            </div>
+
+            <div className="clean-hero-stat">
+              <span>Meta principal</span>
+              <strong>
+                {featuredGoal
+                  ? `${featuredGoal.progress.toFixed(0)}% concluída`
+                  : 'Sem meta'}
+              </strong>
+            </div>
           </div>
         </article>
 
-        <section className="clean-dashboard-grid">
-          <article className="clean-panel">
+        <section className="clean-main-grid">
+          <article className="clean-panel clean-goals-panel">
+            <div className="clean-panel-header clean-panel-header-row">
+              <div>
+                <p className="section-label">Metas financeiras</p>
+                <h2>Objetivos em andamento</h2>
+              </div>
+
+              <Link className="dashboard-goals-link" to="/metas">
+                Ver metas
+              </Link>
+            </div>
+
+            {isLoading ? (
+              <p className="clean-empty">Carregando metas...</p>
+            ) : goalsWithProgress.length === 0 ? (
+              <div className="clean-goals-empty">
+                <p>Nenhuma meta cadastrada.</p>
+                <span>
+                  Crie uma meta para acompanhar seu progresso financeiro.
+                </span>
+
+                <Link to="/metas">Criar meta</Link>
+              </div>
+            ) : (
+              <div className="clean-goals-list">
+                {visibleGoals.map((goal) => (
+                  <article className="clean-goal-item" key={goal.id}>
+                    <div className="clean-goal-header">
+                      <div>
+                        <strong>{goal.title}</strong>
+
+                        <span>
+                          {formatCurrency(saldoAtual)} de{' '}
+                          {formatCurrency(goal.targetValue)}
+                        </span>
+                      </div>
+
+                      <strong>{goal.progress.toFixed(0)}%</strong>
+                    </div>
+
+                    <div className="clean-goal-bar">
+                      <div style={{ width: `${goal.progress}%` }} />
+                    </div>
+
+                    <div className="clean-goal-footer">
+                      <span>Falta {formatCurrency(goal.remainingValue)}</span>
+                      <span>Prazo: {formatDate(goal.deadline)}</span>
+                    </div>
+                  </article>
+                ))}
+
+                <Link className="clean-goals-cta" to="/metas">
+                  Ver todas as metas
+                </Link>
+              </div>
+            )}
+          </article>
+
+          <article className="clean-panel clean-health-panel">
             <div className="clean-panel-header">
               <div>
                 <p className="section-label">Saúde financeira</p>
@@ -228,7 +412,7 @@ function DashboardPage() {
             </div>
           </article>
 
-          <article className="clean-panel">
+          <article className="clean-panel clean-categories-panel">
             <div className="clean-panel-header">
               <div>
                 <p className="section-label">Categorias</p>
@@ -268,44 +452,44 @@ function DashboardPage() {
               </div>
             )}
           </article>
-        </section>
 
-        <article className="clean-panel">
-          <div className="clean-panel-header">
-            <div>
-              <p className="section-label">Histórico</p>
-              <h2>Últimas movimentações</h2>
+          <article className="clean-panel clean-history-panel">
+            <div className="clean-panel-header">
+              <div>
+                <p className="section-label">Histórico</p>
+                <h2>Últimas movimentações</h2>
+              </div>
             </div>
-          </div>
 
-          {isLoading ? (
-            <p className="clean-empty">Carregando movimentações...</p>
-          ) : recentTransactions.length === 0 ? (
-            <p className="clean-empty">Nenhuma movimentação cadastrada.</p>
-          ) : (
-            <div className="clean-transactions">
-              {recentTransactions.map((transaction) => (
-                <div className="clean-transaction" key={transaction.id}>
-                  <div>
-                    <strong>{transaction.description}</strong>
-                    <span>
-                      {transaction.category} · {formatDate(transaction.date)}
-                    </span>
+            {isLoading ? (
+              <p className="clean-empty">Carregando movimentações...</p>
+            ) : recentTransactions.length === 0 ? (
+              <p className="clean-empty">Nenhuma movimentação cadastrada.</p>
+            ) : (
+              <div className="clean-transactions">
+                {recentTransactions.map((transaction) => (
+                  <div className="clean-transaction" key={transaction.id}>
+                    <div>
+                      <strong>{transaction.description}</strong>
+                      <span>
+                        {transaction.category} · {formatDate(transaction.date)}
+                      </span>
+                    </div>
+
+                    <strong
+                      className={
+                        transaction.type === 'income' ? 'positive' : 'negative'
+                      }
+                    >
+                      {transaction.type === 'income' ? '+' : '-'}{' '}
+                      {formatCurrency(transaction.value)}
+                    </strong>
                   </div>
-
-                  <strong
-                    className={
-                      transaction.type === 'income' ? 'positive' : 'negative'
-                    }
-                  >
-                    {transaction.type === 'income' ? '+' : '-'}{' '}
-                    {formatCurrency(transaction.value)}
-                  </strong>
-                </div>
-              ))}
-            </div>
-          )}
-        </article>
+                ))}
+              </div>
+            )}
+          </article>
+        </section>
       </section>
     </PlatformLayout>
   )
