@@ -1,0 +1,76 @@
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-page: #07111f;
+  --bg-surface: rgba(15, 29, 46, 0.92);
+  --bg-soft: rgba(255, 255, 255, 0.045);
+  --bg-input: rgba(255, 255, 255, 0.045);
+
+  --text-main: #e5edf8;
+  --text-body: #e5edf8;
+  --text-muted: #9aacbd;
+  --text-soft: #9aacbd;
+  --text-inverse: #ffffff;
+
+  --primary: #7fd6c4;
+  --primary-soft: rgba(127, 214, 196, 0.12);
+  --primary-light: #7fd6c4;
+
+  --danger: #ff9b9b;
+  --danger-soft: rgba(255, 143, 143, 0.1);
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-input: rgba(255, 255, 255, 0.1);
+
+  --shadow-soft: 0 18px 44px rgba(0, 0, 0, 0.18);
+  --shadow-medium: 0 18px 44px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0 22px 60px rgba(0, 0, 0, 0.26);
+}
+
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(20, 108, 101, 0.16), transparent 28%),
+    var(--bg-page);
+}
+
+html[data-theme='dark'] .platform-layout {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(20, 108, 101, 0.16), transparent 28%),
+    var(--bg-page);
+}
+
+html[data-theme='dark'] .platform-sidebar {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(127, 214, 196, 0.12), transparent 34%),
+    #081626;
+}
+
+html[data-theme='dark'] .modern-dashboard-hero,
+html[data-theme='dark'] .revenue-kpi.primary {
+  background:
+    radial-gradient(circle at 92% 8%, rgba(127, 214, 196, 0.18), transparent 32%),
+    linear-gradient(135deg, #0b1828 0%, #11313a 100%);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] .expense-primary {
+  background:
+    radial-gradient(circle at 88% 16%, rgba(255, 194, 194, 0.13), transparent 32%),
+    linear-gradient(135deg, #2a1018 0%, #3d1723 100%);
+  border: 1px solid var(--border);
+}
+
+html[data-theme='dark'] input::placeholder {
+  color: #7f8ea3;
+}
+
+html[data-theme='dark'] .modern-bar-fill.income,
+html[data-theme='dark'] .revenue-chart-fill {
+  background: var(--primary);
+}
+
+html[data-theme='dark'] .modern-bar-fill.expense,
+html[data-theme='dark'] .modern-bar-fill.category,
+html[data-theme='dark'] .expense-fill {
+  background: var(--danger);
+}

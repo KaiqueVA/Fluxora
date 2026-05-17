@@ -1,3 +1,5 @@
+import ThemeToggle from './ThemeToggle'
+
 function Topbar({ title = 'Dashboard', label = 'Painel financeiro' }) {
   return (
     <header className="platform-topbar">
@@ -6,8 +8,12 @@ function Topbar({ title = 'Dashboard', label = 'Painel financeiro' }) {
         <h1>{title}</h1>
       </div>
 
-      <div className="user-pill">
-        <span>Usuário</span>
+      <div className="topbar-actions">
+        <ThemeToggle />
+
+        <div className="user-pill">
+          <span>Usuário</span>
+        </div>
       </div>
     </header>
   )

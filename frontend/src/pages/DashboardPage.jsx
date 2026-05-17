@@ -65,11 +65,11 @@ function DashboardPage() {
   const comprometimento =
     totalReceitas > 0 ? (totalDespesas / totalReceitas) * 100 : 0
 
-  const ticketMedioDespesa =
+  const ticketMedio =
     despesas.length > 0 ? totalDespesas / despesas.length : 0
 
   const categoryExpenses = useMemo(() => {
-    const grouped = despesas.reduce((accumulator, despesa) => {
+    const groupedExpenses = despesas.reduce((accumulator, despesa) => {
       const category = despesa.category || 'Sem categoria'
       const value = Number(despesa.value || 0)
 
@@ -78,13 +78,14 @@ function DashboardPage() {
       return accumulator
     }, {})
 
-    return Object.entries(grouped)
+    return Object.entries(groupedExpenses)
       .map(([category, value]) => ({
         category,
         value,
         percentage: totalDespesas > 0 ? (value / totalDespesas) * 100 : 0,
       }))
       .sort((a, b) => b.value - a.value)
+      .slice(0, 5)
   }, [despesas, totalDespesas])
 
   const topCategory = categoryExpenses[0]
@@ -97,50 +98,50 @@ function DashboardPage() {
   const maxComparisonValue = Math.max(totalReceitas, totalDespesas, 1)
 
   const recentTransactions = useMemo(() => {
-    const receitasFormatadas = receitas.map((receita) => ({
+    const incomeTransactions = receitas.map((receita) => ({
       id: `receita-${receita.id}`,
-      type: 'receita',
+      type: 'income',
       description: receita.description,
       category: 'Receita',
       value: Number(receita.value || 0),
       date: receita.date,
     }))
 
-    const despesasFormatadas = despesas.map((despesa) => ({
+    const expenseTransactions = despesas.map((despesa) => ({
       id: `despesa-${despesa.id}`,
-      type: 'despesa',
+      type: 'expense',
       description: despesa.description,
       category: despesa.category,
       value: Number(despesa.value || 0),
       date: despesa.date,
     }))
 
-    return [...receitasFormatadas, ...despesasFormatadas]
+    return [...incomeTransactions, ...expenseTransactions]
       .sort((a, b) => {
         return new Date(`${b.date}T00:00:00`) - new Date(`${a.date}T00:00:00`)
       })
-      .slice(0, 6)
+      .slice(0, 5)
   }, [receitas, despesas])
 
   function getInsightMessage() {
     if (receitas.length === 0 && despesas.length === 0) {
-      return 'Cadastre receitas e despesas para receber uma análise financeira personalizada.'
+      return 'Cadastre receitas e despesas para visualizar sua saúde financeira.'
     }
 
     if (totalReceitas === 0 && totalDespesas > 0) {
-      return 'Você possui despesas cadastradas, mas nenhuma receita registrada. Cadastre suas entradas para acompanhar seu saldo real.'
+      return 'Você já possui despesas cadastradas, mas ainda não registrou receitas.'
     }
 
     if (saldoAtual < 0) {
       return `Suas despesas ultrapassaram suas receitas em ${formatCurrency(
         Math.abs(saldoAtual),
-      )}. Vale revisar os gastos mais relevantes.`
+      )}.`
     }
 
     if (comprometimento >= 80) {
       return `Suas despesas comprometem ${comprometimento.toFixed(
         0,
-      )}% da renda. Esse nível exige atenção para evitar perda de controle financeiro.`
+      )}% da renda. Vale revisar os principais gastos.`
     }
 
     if (topCategory) {
@@ -149,57 +150,57 @@ function DashboardPage() {
       }, representando ${topCategory.percentage.toFixed(0)}% das despesas.`
     }
 
-    return 'Seu saldo está positivo. Continue acompanhando as movimentações para manter previsibilidade financeira.'
+    return 'Seu saldo está positivo. Continue acompanhando as movimentações.'
   }
 
   return (
     <PlatformLayout>
       <Topbar title="Dashboard" label="Visão geral" />
 
-      <section className="analytics-dashboard">
+      <section className="modern-dashboard">
         {error && <p className="auth-error">{error}</p>}
 
-        <section className="analytics-hero-card">
+        <article className="modern-dashboard-hero">
           <div>
-            <p className="section-label">Análise financeira</p>
+            <p className="section-label">Insight financeiro</p>
             <h2>{getInsightMessage()}</h2>
           </div>
 
-          <div className="analytics-hero-value">
+          <div className="modern-balance-card">
             <span>Saldo atual</span>
             <strong>{formatCurrency(saldoAtual)}</strong>
           </div>
-        </section>
+        </article>
 
-        <section className="analytics-kpi-grid">
-          <article className="analytics-kpi">
+        <section className="modern-kpi-grid">
+          <article className="modern-kpi-card">
             <span>Receitas</span>
             <strong>{formatCurrency(totalReceitas)}</strong>
-            <p>Total de entradas registradas.</p>
+            <p>Entradas registradas</p>
           </article>
 
-          <article className="analytics-kpi">
+          <article className="modern-kpi-card">
             <span>Despesas</span>
             <strong>{formatCurrency(totalDespesas)}</strong>
-            <p>Total de saídas registradas.</p>
+            <p>Saídas registradas</p>
           </article>
 
-          <article className="analytics-kpi">
+          <article className="modern-kpi-card">
             <span>Comprometimento</span>
             <strong>{comprometimento.toFixed(0)}%</strong>
-            <p>Percentual da renda usado em despesas.</p>
+            <p>Da renda utilizada</p>
           </article>
 
-          <article className="analytics-kpi">
+          <article className="modern-kpi-card">
             <span>Ticket médio</span>
-            <strong>{formatCurrency(ticketMedioDespesa)}</strong>
-            <p>Valor médio por despesa cadastrada.</p>
+            <strong>{formatCurrency(ticketMedio)}</strong>
+            <p>Por despesa</p>
           </article>
         </section>
 
-        <section className="analytics-grid">
-          <article className="analytics-card">
-            <div className="analytics-card-header">
+        <section className="modern-dashboard-grid">
+          <article className="modern-panel">
+            <div className="modern-panel-header">
               <div>
                 <p className="section-label">Comparativo</p>
                 <h2>Receitas x despesas</h2>
@@ -207,18 +208,18 @@ function DashboardPage() {
             </div>
 
             {isLoading ? (
-              <p className="analytics-empty">Carregando dados...</p>
+              <p className="modern-empty">Carregando dados...</p>
             ) : (
-              <div className="analytics-bars">
-                <div className="analytics-bar-item">
-                  <div className="analytics-bar-label">
+              <div className="modern-bars">
+                <div className="modern-bar-item">
+                  <div className="modern-bar-label">
                     <span>Receitas</span>
                     <strong>{formatCurrency(totalReceitas)}</strong>
                   </div>
 
-                  <div className="analytics-track">
+                  <div className="modern-bar-track">
                     <div
-                      className="analytics-fill income"
+                      className="modern-bar-fill income"
                       style={{
                         width: `${Math.max(
                           (totalReceitas / maxComparisonValue) * 100,
@@ -229,15 +230,15 @@ function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="analytics-bar-item">
-                  <div className="analytics-bar-label">
+                <div className="modern-bar-item">
+                  <div className="modern-bar-label">
                     <span>Despesas</span>
                     <strong>{formatCurrency(totalDespesas)}</strong>
                   </div>
 
-                  <div className="analytics-track">
+                  <div className="modern-bar-track">
                     <div
-                      className="analytics-fill expense"
+                      className="modern-bar-fill expense"
                       style={{
                         width: `${Math.max(
                           (totalDespesas / maxComparisonValue) * 100,
@@ -251,8 +252,8 @@ function DashboardPage() {
             )}
           </article>
 
-          <article className="analytics-card">
-            <div className="analytics-card-header">
+          <article className="modern-panel">
+            <div className="modern-panel-header">
               <div>
                 <p className="section-label">Categorias</p>
                 <h2>Para onde o dinheiro foi?</h2>
@@ -260,19 +261,19 @@ function DashboardPage() {
             </div>
 
             {categoryExpenses.length === 0 ? (
-              <p className="analytics-empty">Nenhuma despesa cadastrada.</p>
+              <p className="modern-empty">Nenhuma despesa cadastrada.</p>
             ) : (
-              <div className="analytics-bars">
+              <div className="modern-bars">
                 {categoryExpenses.map((item) => (
-                  <div className="analytics-bar-item" key={item.category}>
-                    <div className="analytics-bar-label">
+                  <div className="modern-bar-item" key={item.category}>
+                    <div className="modern-bar-label">
                       <span>{item.category}</span>
                       <strong>{formatCurrency(item.value)}</strong>
                     </div>
 
-                    <div className="analytics-track">
+                    <div className="modern-bar-track">
                       <div
-                        className="analytics-fill category"
+                        className="modern-bar-fill category"
                         style={{
                           width: `${Math.max(
                             (item.value / maxCategoryValue) * 100,
@@ -290,47 +291,44 @@ function DashboardPage() {
           </article>
         </section>
 
-        <section className="analytics-grid bottom">
-          <article className="analytics-card">
-            <div className="analytics-card-header">
+        <section className="modern-dashboard-grid bottom">
+          <article className="modern-panel compact">
+            <div className="modern-panel-header">
               <div>
-                <p className="section-label">Destaque</p>
-                <h2>Maior categoria de gasto</h2>
+                <p className="section-label">Maior gasto</p>
+                <h2>Categoria destaque</h2>
               </div>
             </div>
 
             {topCategory ? (
-              <div className="analytics-highlight">
+              <div className="modern-highlight">
                 <strong>{topCategory.category}</strong>
                 <span>{formatCurrency(topCategory.value)}</span>
-                <p>
-                  Essa categoria representa {topCategory.percentage.toFixed(0)}%
-                  das despesas cadastradas.
-                </p>
+                <p>{topCategory.percentage.toFixed(0)}% das despesas totais</p>
               </div>
             ) : (
-              <p className="analytics-empty">Nenhuma categoria encontrada.</p>
+              <p className="modern-empty">Nenhuma categoria encontrada.</p>
             )}
           </article>
 
-          <article className="analytics-card">
-            <div className="analytics-card-header">
+          <article className="modern-panel">
+            <div className="modern-panel-header">
               <div>
-                <p className="section-label">Atividade recente</p>
+                <p className="section-label">Histórico</p>
                 <h2>Últimas movimentações</h2>
               </div>
             </div>
 
             {isLoading ? (
-              <p className="analytics-empty">Carregando movimentações...</p>
+              <p className="modern-empty">Carregando movimentações...</p>
             ) : recentTransactions.length === 0 ? (
-              <p className="analytics-empty">
+              <p className="modern-empty">
                 Nenhuma movimentação cadastrada.
               </p>
             ) : (
-              <div className="analytics-transactions">
+              <div className="modern-transaction-list">
                 {recentTransactions.map((transaction) => (
-                  <div className="analytics-transaction" key={transaction.id}>
+                  <div className="modern-transaction" key={transaction.id}>
                     <div>
                       <strong>{transaction.description}</strong>
                       <span>
@@ -340,10 +338,10 @@ function DashboardPage() {
 
                     <strong
                       className={
-                        transaction.type === 'receita' ? 'positive' : 'negative'
+                        transaction.type === 'income' ? 'positive' : 'negative'
                       }
                     >
-                      {transaction.type === 'receita' ? '+' : '-'}{' '}
+                      {transaction.type === 'income' ? '+' : '-'}{' '}
                       {formatCurrency(transaction.value)}
                     </strong>
                   </div>

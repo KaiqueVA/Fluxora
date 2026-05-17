@@ -1,0 +1,245 @@
+.platform-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.platform-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  background: #10203a;
+  color: #ffffff;
+}
+
+.platform-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.platform-nav {
+  display: grid;
+  gap: 10px;
+  margin-top: 44px;
+}
+
+.platform-nav a {
+  padding: 13px 14px;
+  border-radius: 12px;
+  color: #cbd8e8;
+  font-weight: 800;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.platform-nav a:hover,
+.platform-nav a.active {
+  color: #ffffff;
+  background: rgba(127, 214, 196, 0.14);
+}
+
+.logout-button {
+  margin-top: auto;
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 800;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.platform-content {
+  padding: 36px;
+}
+
+.platform-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.platform-topbar h1 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.topbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-pill,
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 16px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.theme-toggle {
+  gap: 8px;
+  font-size: 0.9rem;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.theme-toggle:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.dashboard-panel,
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-medium);
+}
+
+.dashboard-panel {
+  padding: 26px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.5rem;
+}
+
+.panel-description {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.platform-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.65fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.platform-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.platform-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.platform-form input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  padding: 0 14px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font-size: 1rem;
+  font-weight: 400;
+  outline: none;
+}
+
+.platform-form input::placeholder {
+  color: #98a4b5;
+  font-weight: 400;
+}
+
+.platform-form input:focus {
+  border-color: var(--primary);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+.platform-form .primary-btn {
+  width: fit-content;
+  margin-top: 6px;
+}
+
+.platform-table-panel {
+  overflow: hidden;
+}
+
+.platform-table {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  overflow-x: auto;
+}
+
+.platform-table-header,
+.platform-table-row {
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  min-width: 760px;
+  padding: 14px 16px;
+}
+
+.platform-table-header {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.platform-table-row {
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+
+.platform-table-row span {
+  color: var(--text-muted);
+}
+
+.platform-table-row button {
+  width: fit-content;
+  border: 1px solid #f3b4b4;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.platform-table-row button:hover {
+  background: #fee2e2;
+}
