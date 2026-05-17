@@ -1,6 +1,6 @@
 from apps.receitas.models import Receita
 from apps.interfaces import UserScopedRepositoryInterface
-
+from decimal import Decimal
 
 class ReceitaRepository(UserScopedRepositoryInterface):
     
@@ -20,6 +20,15 @@ class ReceitaRepository(UserScopedRepositoryInterface):
             id=receita_id,
             user=user
         ).first()
+        
+    def get_total_sum_by_user(self, user):
+        receitas = Receita.objects.filter(user=user).values_list('value', flat=True)
+        return sum(receitas, Decimal("0.00"))
+        
+    def get_total_sum_by_user(self, user):
+        receitas = Receita.objects.filter(user=user).values_list('value', flat=True)
+        return sum(receitas, Decimal("0.00"))
+    
     
     def update(self, receita, receita_entity):
         receita.description = receita_entity.description
@@ -31,3 +40,4 @@ class ReceitaRepository(UserScopedRepositoryInterface):
     
     def delete(self, receita):
         receita.delete()
+        

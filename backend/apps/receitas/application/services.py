@@ -40,6 +40,14 @@ class RetrieveReceitaService:
     def execute(self, receita_id, user):
         return self.repository.get_by_id_for_user(receita_id, user)
     
+
+class GetTotalReceitasService:
+    def __init__(self, repository: UserScopedRepositoryInterface):
+        self.repository = repository
+
+    def execute(self, user):
+        return self.repository.get_total_sum_by_user(user)
+
     
 class UpdateReceitaService:
 

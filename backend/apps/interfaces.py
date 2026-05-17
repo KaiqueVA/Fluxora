@@ -14,6 +14,10 @@ class UserScopedRepositoryInterface(ABC):
     @abstractmethod
     def get_by_id_for_user(self, entity_id, user):
         pass
+    
+    @abstractmethod
+    def get_total_sum_by_user(self, user):
+        pass
 
     @abstractmethod
     def update(self, instance, data):
