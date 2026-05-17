@@ -57,17 +57,19 @@ body,
   }
 }
 
+/* =========================
+   LANDING - TABLET
+========================= */
+
 @media (max-width: 980px) {
-  .platform-content {
-    padding: 32px 26px 26px;
-  }
-
-  .platform-topbar {
-    margin-bottom: 26px;
-  }
-
-  .platform-topbar h1 {
-    font-size: clamp(2rem, 7vw, 3rem);
+  .site-header,
+  .hero-section,
+  .purpose-section,
+  .workflow-section,
+  .features-section,
+  .insight-section,
+  .access-section {
+    width: min(100% - 40px, 820px);
   }
 
   .site-header {
@@ -78,9 +80,109 @@ body,
     gap: 20px;
   }
 
-  .workflow-section,
+  .hero-section {
+    min-height: auto;
+    padding: 48px 0 64px;
+    text-align: center;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-copy h1 {
+    max-width: 760px;
+    margin: 0 auto;
+    font-size: clamp(3rem, 8vw, 4.8rem);
+  }
+
+  .lead {
+    max-width: 680px;
+    margin: 22px auto 0;
+  }
+
+  .action-row {
+    justify-content: center;
+  }
+
+  .product-visual {
+    justify-self: center;
+    max-width: 520px;
+    min-height: auto;
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .platform-preview,
+  .phone-frame {
+    width: 100%;
+  }
+
+  .purpose-section {
+    gap: 28px;
+    padding: 64px 0 28px;
+    text-align: center;
+  }
+
+  .purpose-section h2,
+  .purpose-section p {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .purpose-section p {
+    margin-top: 0;
+  }
+
+  .workflow-section {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    padding: 28px 0 64px;
+  }
+
   .feature-grid {
     grid-template-columns: repeat(2, minmax(240px, 1fr));
+  }
+
+  .features-section,
+  .insight-section {
+    padding: 64px 0;
+  }
+
+  .insight-section {
+    gap: 28px;
+    text-align: center;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .access-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .access-section p {
+    margin: 16px auto 0;
+  }
+
+  .access-actions {
+    justify-content: center;
+  }
+
+  /* Plataforma */
+  .platform-content {
+    padding: 32px 26px 26px;
+  }
+
+  .platform-topbar {
+    margin-bottom: 26px;
+  }
+
+  .platform-topbar h1 {
+    font-size: clamp(2rem, 7vw, 3rem);
   }
 
   .income-form,
@@ -100,6 +202,10 @@ body,
     flex: 1;
   }
 }
+
+/* =========================
+   AUTH MOBILE / TABLET
+========================= */
 
 @media (max-width: 900px) {
   .auth-page {
@@ -161,77 +267,250 @@ body,
   }
 }
 
+/* =========================
+   LANDING - MOBILE GRANDE
+========================= */
+
 @media (max-width: 760px) {
+  .site-header,
+  .hero-section,
+  .purpose-section,
+  .workflow-section,
+  .features-section,
+  .insight-section,
+  .access-section {
+    width: min(100% - 32px, 520px);
+  }
+
   .site-header {
     align-items: flex-start;
     flex-direction: column;
     gap: 14px;
+    padding: 18px 0 8px;
+  }
+
+  .brand {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .site-nav {
     width: 100%;
+    display: flex;
+    gap: 10px;
     overflow-x: auto;
-    gap: 18px;
-    padding-bottom: 4px;
+    padding: 2px 0 8px;
+    scrollbar-width: none;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-surface);
+    font-size: 0.84rem;
   }
 
   .hero-section {
-    min-height: auto;
-    padding: 42px 0 60px;
+    gap: 24px;
+    padding: 30px 0 46px;
+    text-align: left;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    margin: 0;
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.55rem, 12vw, 4.2rem);
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(2.35rem, 11vw, 3.35rem);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
   }
 
   .lead {
+    max-width: 100%;
+    margin: 18px 0 0;
     font-size: 1rem;
+    line-height: 1.68;
+  }
+
+  .action-row {
+    justify-content: flex-start;
+    margin-top: 24px;
+  }
+
+  .action-row .primary-btn,
+  .action-row .secondary-btn {
+    width: 100%;
   }
 
   .product-visual {
-    padding: 16px;
-    border-radius: 24px;
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .platform-preview,
+  .phone-frame {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px;
+    border-radius: 22px;
   }
 
   .preview-insight-card,
-  .preview-content-grid {
+  .preview-content-grid,
+  .cashflow-grid {
     grid-template-columns: 1fr;
   }
 
-  .purpose-section,
-  .features-section,
-  .insight-section {
-    padding: 56px 0;
+  .preview-topbar,
+  .preview-transactions div,
+  .preview-category-item > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .preview-status {
+    width: fit-content;
+  }
+
+  .phone-frame {
+    box-shadow: 0 20px 48px rgba(16, 32, 58, 0.22);
+  }
+
+  .chart-bars {
+    height: 92px;
+  }
+
+  .purpose-section {
+    gap: 18px;
+    padding: 46px 0 24px;
+    text-align: left;
+  }
+
+  .purpose-section h2,
+  .section-heading h2,
+  .insight-copy h2,
+  .access-section h2 {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.045em;
   }
 
   .purpose-section p {
-    margin-top: 24px;
-    font-size: 1.05rem;
+    margin-top: 0;
+    font-size: 1rem;
+    line-height: 1.7;
   }
 
-  .workflow-section,
+  .workflow-section {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px 0 46px;
+  }
+
+  .step-card {
+    min-height: auto;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .step-card h3 {
+    margin-top: 10px;
+    font-size: 1.08rem;
+  }
+
+  .features-section {
+    padding: 46px 0;
+  }
+
+  .section-heading {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
   .feature-grid {
     grid-template-columns: 1fr;
-    padding-bottom: 56px;
+    gap: 12px;
+  }
+
+  .feature-card {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .feature-card h3 {
+    font-size: 1.08rem;
+  }
+
+  .feature-card p {
+    margin-top: 10px;
+    font-size: 0.94rem;
+    line-height: 1.58;
+  }
+
+  .insight-section {
+    gap: 20px;
+    padding: 46px 0;
+    text-align: left;
+  }
+
+  .insight-copy p {
+    font-size: 0.96rem;
+    line-height: 1.65;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .metrics-grid article {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .metrics-grid strong {
+    font-size: 1.65rem;
   }
 
   .access-section {
-    grid-template-columns: 1fr;
-    margin-bottom: 44px;
+    gap: 20px;
+    margin-bottom: 42px;
+    padding: 22px;
+    border-radius: 20px;
+    text-align: left;
+  }
+
+  .access-section p {
+    margin: 12px 0 0;
+    font-size: 0.96rem;
+    line-height: 1.65;
   }
 
   .access-actions {
     justify-content: flex-start;
+    width: 100%;
   }
 
-  .clean-metrics,
-  .clean-mini-row,
-  .clean-category-list.is-split,
-  .data-summary-grid,
-  .analysis-focus-grid {
-    grid-template-columns: 1fr;
+  .access-actions .primary-btn,
+  .access-actions .secondary-btn {
+    width: 100%;
   }
 
+  /* Plataforma */
   .income-form,
   .expense-form {
     grid-template-columns: 1fr;
@@ -274,6 +553,10 @@ body,
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================
+   MOBILE DA PLATAFORMA
+========================= */
 
 @media (max-width: 560px) {
   .platform-content {
@@ -355,57 +638,6 @@ body,
 
   .sidebar-footer {
     grid-template-columns: 1fr;
-  }
-
-  .hero-section,
-  .purpose-section,
-  .workflow-section,
-  .features-section,
-  .insight-section,
-  .access-section,
-  .platform-content {
-    width: 100%;
-  }
-
-  .hero-section,
-  .purpose-section,
-  .workflow-section,
-  .features-section,
-  .insight-section,
-  .access-section {
-    width: min(100%, calc(100% - 28px));
-  }
-
-  .hero-copy h1 {
-    font-size: clamp(2.25rem, 13vw, 3.45rem);
-    letter-spacing: -0.055em;
-  }
-
-  .action-row .primary-btn,
-  .access-actions .primary-btn,
-  .access-actions .secondary-btn {
-    width: 100%;
-  }
-
-  .product-visual {
-    padding: 12px;
-    border-radius: 22px;
-  }
-
-  .platform-preview {
-    padding: 14px;
-    border-radius: 22px;
-  }
-
-  .preview-topbar,
-  .preview-transactions div,
-  .preview-category-item > div:first-child {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .preview-status {
-    width: fit-content;
   }
 
   .auth-page {
@@ -757,7 +989,129 @@ body,
   }
 }
 
+/* =========================
+   MOBILE PEQUENO
+========================= */
+
 @media (max-width: 420px) {
+  .site-header,
+  .hero-section,
+  .purpose-section,
+  .workflow-section,
+  .features-section,
+  .insight-section,
+  .access-section {
+    width: min(100% - 26px, 390px);
+  }
+
+  .site-header {
+    padding-top: 14px;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .site-nav {
+    gap: 8px;
+  }
+
+  .site-nav a {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .hero-section {
+    padding: 24px 0 40px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.15rem, 12vw, 2.65rem);
+  }
+
+  .lead {
+    margin-top: 16px;
+    font-size: 0.95rem;
+  }
+
+  .product-visual {
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .platform-preview,
+  .phone-frame {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .preview-brand small,
+  .preview-status,
+  .preview-insight-card span,
+  .preview-kpi-row span,
+  .preview-panel-header span,
+  .preview-panel p,
+  .preview-category-item span,
+  .preview-transactions span {
+    font-size: 0.7rem;
+  }
+
+  .preview-insight-card,
+  .preview-kpi-row div,
+  .preview-panel,
+  .preview-transactions {
+    border-radius: 14px;
+  }
+
+  .purpose-section {
+    padding: 38px 0 18px;
+  }
+
+  .features-section,
+  .insight-section {
+    padding: 38px 0;
+  }
+
+  .purpose-section h2,
+  .section-heading h2,
+  .insight-copy h2,
+  .access-section h2 {
+    font-size: clamp(1.75rem, 9vw, 2.25rem);
+  }
+
+  .purpose-section p,
+  .feature-card p,
+  .insight-copy p,
+  .access-section p {
+    font-size: 0.92rem;
+  }
+
+  .workflow-section {
+    padding-bottom: 38px;
+  }
+
+  .step-card,
+  .feature-card,
+  .metrics-grid article {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .metrics-grid strong {
+    font-size: 1.45rem;
+  }
+
+  .access-section {
+    margin-bottom: 32px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
   .platform-content {
     padding: 22px 14px 14px;
   }
@@ -788,27 +1142,6 @@ body,
 
   .platform-topbar h1 {
     font-size: 2rem;
-  }
-
-  .hero-section,
-  .purpose-section,
-  .workflow-section,
-  .features-section,
-  .insight-section,
-  .access-section {
-    width: min(100%, calc(100% - 24px));
-  }
-
-  .hero-copy h1 {
-    font-size: 2.45rem;
-  }
-
-  .lead {
-    font-size: 0.98rem;
-  }
-
-  .product-visual {
-    display: none;
   }
 
   .auth-page {
@@ -942,5 +1275,89 @@ body,
   .receipts-history-item,
   .clean-transaction {
     padding: 12px;
+  }
+}
+
+/* =========================
+   LANDING MOBILE HEADER CLEAN
+========================= */
+
+@media (max-width: 760px) {
+  .landing-page .site-header {
+    position: static !important;
+    top: auto !important;
+    z-index: 10 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    width: min(100% - 32px, 520px) !important;
+    margin: 0 auto !important;
+    padding: 18px 0 8px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .landing-page .brand {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    color: var(--text-main) !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+  }
+
+  .landing-page .brand-mark {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 11px !important;
+  }
+
+  .landing-page .site-nav {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: auto !important;
+    gap: 14px !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .landing-page .site-nav a {
+    min-height: auto !important;
+    padding: 6px 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: var(--text-muted) !important;
+    background: transparent !important;
+    font-size: 0.82rem !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+
+  .landing-page .site-nav a:hover,
+  .landing-page .site-nav a:focus-visible {
+    color: var(--primary) !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .landing-page .site-header {
+    width: min(100% - 26px, 390px) !important;
+    padding: 16px 0 6px !important;
+  }
+
+  .landing-page .site-nav {
+    display: none !important;
   }
 }
