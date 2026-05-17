@@ -17,6 +17,11 @@ const navItems = [
     icon: '−',
   },
   {
+    path: '/metas',
+    label: 'Metas',
+    icon: '◎',
+  },
+  {
     path: '/comprovantes',
     label: 'Comprovantes',
     icon: '◈',
