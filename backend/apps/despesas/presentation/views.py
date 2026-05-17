@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import action
 
 from drf_spectacular.utils import extend_schema
+
 
 from apps.despesas.presentation.factories import (
     create_despesa_service,
@@ -12,6 +14,7 @@ from apps.despesas.presentation.factories import (
     list_despesas_service,
     retrieve_despesa_service,
     update_despesa_service,
+    get_total_despesas_service
 )
 from apps.despesas.presentation.serializers import DespesaSerializer
 from apps.despesas.domain.exceptions import ValidationException, DespesaNotFoundException
@@ -79,6 +82,20 @@ class DespesaViewSet(ViewSet):
                 {"detail": str(error)},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+    @extend_schema(
+        responses={200: DespesaSerializer, 404: dict},
+    )
+    @action(detail=False, methods=["get"], url_path="total")
+    def total(self, request):
+        service = get_total_despesas_service()
+        total = service.execute(request.user)
+
+        return Response(
+            {"total": total},
+            status=status.HTTP_200_OK
+        )
+
 
     @extend_schema(
         request=DespesaSerializer,
@@ -121,3 +138,5 @@ class DespesaViewSet(ViewSet):
                 {"detail": str(error)},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+            
