@@ -68,7 +68,9 @@ function RegisterPage() {
     <main className="auth-page">
       <section className="auth-card">
         <Link className="auth-brand" to="/">
-          <span className="brand-mark">F</span>
+          <span className="brand-mark brand-logo-mark">
+            <img src="/fluxora-icon.png" alt="Fluxora" />
+          </span>
           <span>Fluxora</span>
         </Link>
 

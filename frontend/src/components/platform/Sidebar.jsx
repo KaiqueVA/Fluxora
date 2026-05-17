@@ -28,7 +28,7 @@ const navItems = [
   },
 ]
 
-function Sidebar({ isOpen = false, onClose = () => {} }) {
+function Sidebar({ isOpen = false, onClose = () => { } }) {
   const navigate = useNavigate()
 
   function handleLogout() {
@@ -46,7 +46,9 @@ function Sidebar({ isOpen = false, onClose = () => {} }) {
     <aside className={`platform-sidebar ${isOpen ? 'is-open' : ''}`}>
       <div className="sidebar-header">
         <NavLink className="platform-brand" to="/dashboard" onClick={onClose}>
-          <span className="brand-mark">F</span>
+          <span className="brand-mark brand-logo-mark">
+            <img src="/fluxora-icon.png" alt="Fluxora" />
+          </span>
 
           <div className="brand-text">
             <strong>Fluxora</strong>
