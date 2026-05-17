@@ -78,11 +78,25 @@ function getRemainingValue(targetValue) {
   return remainingValue
 }
 
-function getGoalStatus(progress, deadline) {
+function getDaysRemaining(deadline) {
+  if (!deadline) {
+    return null
+  }
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const limitDate = deadline ? new Date(`${deadline}T00:00:00`) : null
+  const limitDate = new Date(`${deadline}T00:00:00`)
+  const differenceInMilliseconds = limitDate - today
+  const differenceInDays = Math.ceil(
+    differenceInMilliseconds / (1000 * 60 * 60 * 24),
+  )
+
+  return differenceInDays
+}
+
+function getGoalStatus(progress, deadline) {
+  const daysRemaining = getDaysRemaining(deadline)
 
   if (progress >= 100) {
     return {
@@ -91,10 +105,17 @@ function getGoalStatus(progress, deadline) {
     }
   }
 
-  if (limitDate && limitDate < today) {
+  if (daysRemaining !== null && daysRemaining < 0) {
     return {
       label: 'Atrasada',
       className: 'is-late',
+    }
+  }
+
+  if (daysRemaining !== null && daysRemaining <= 30) {
+    return {
+      label: 'Prazo próximo',
+      className: 'is-warning',
     }
   }
 
@@ -104,11 +125,35 @@ function getGoalStatus(progress, deadline) {
   }
 }
 
+function formatDeadlineInfo(deadline) {
+  const daysRemaining = getDaysRemaining(deadline)
+
+  if (daysRemaining === null) {
+    return 'Sem prazo definido'
+  }
+
+  if (daysRemaining < 0) {
+    return `${Math.abs(daysRemaining)} dias atrasada`
+  }
+
+  if (daysRemaining === 0) {
+    return 'Vence hoje'
+  }
+
+  if (daysRemaining === 1) {
+    return 'Falta 1 dia'
+  }
+
+  return `Faltam ${daysRemaining} dias`
+}
+
 function GoalsPage() {
   const [goals, setGoals] = useState(initialGoals)
   const [formData, setFormData] = useState(emptyForm)
   const [editingGoalId, setEditingGoalId] = useState(null)
   const [message, setMessage] = useState('')
+  const [isFormVisible, setIsFormVisible] = useState(false)
+  const [expandedGoalIds, setExpandedGoalIds] = useState([])
 
   const goalsWithProgress = useMemo(() => {
     return goals.map((goal) => {
@@ -151,6 +196,25 @@ function GoalsPage() {
       })[0]
   }, [goalsWithProgress])
 
+  function scrollToForm() {
+    window.requestAnimationFrame(() => {
+      const formElement = document.getElementById('goal-form')
+
+      if (formElement) {
+        formElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }
+    })
+  }
+
+  function handleOpenForm() {
+    setIsFormVisible(true)
+    setMessage('')
+    scrollToForm()
+  }
+
   function handleChange(event) {
     const { name, value } = event.target
 
@@ -166,6 +230,21 @@ function GoalsPage() {
     setMessage('')
   }
 
+  function handleCloseForm() {
+    resetForm()
+    setIsFormVisible(false)
+  }
+
+  function toggleGoalDetails(goalId) {
+    setExpandedGoalIds((currentIds) => {
+      if (currentIds.includes(goalId)) {
+        return currentIds.filter((id) => id !== goalId)
+      }
+
+      return [...currentIds, goalId]
+    })
+  }
+
   function handleSubmit(event) {
     event.preventDefault()
 
@@ -173,16 +252,19 @@ function GoalsPage() {
 
     if (!formData.title.trim()) {
       setMessage('Informe o nome da meta.')
+      setIsFormVisible(true)
       return
     }
 
     if (!numericTargetValue || numericTargetValue <= 0) {
       setMessage('Informe um valor alvo maior que zero.')
+      setIsFormVisible(true)
       return
     }
 
     if (!formData.deadline) {
       setMessage('Informe o prazo da meta.')
+      setIsFormVisible(true)
       return
     }
 
@@ -208,6 +290,7 @@ function GoalsPage() {
       setMessage('Meta atualizada com sucesso.')
       setEditingGoalId(null)
       setFormData(emptyForm)
+      setIsFormVisible(false)
       return
     }
 
@@ -217,19 +300,32 @@ function GoalsPage() {
     }
 
     setGoals((currentGoals) => [newGoal, ...currentGoals])
+    setExpandedGoalIds((currentIds) => [newGoal.id, ...currentIds])
     setFormData(emptyForm)
     setMessage('Meta criada com sucesso.')
+    setIsFormVisible(false)
   }
 
   function handleEdit(goal) {
     setEditingGoalId(goal.id)
+    setIsFormVisible(true)
+    setExpandedGoalIds((currentIds) => {
+      if (currentIds.includes(goal.id)) {
+        return currentIds
+      }
+
+      return [...currentIds, goal.id]
+    })
+
     setFormData({
       title: goal.title,
       targetValue: String(goal.targetValue),
       deadline: goal.deadline,
       description: goal.description || '',
     })
+
     setMessage('')
+    scrollToForm()
   }
 
   function handleRemove(goalId) {
@@ -237,8 +333,13 @@ function GoalsPage() {
       return currentGoals.filter((goal) => goal.id !== goalId)
     })
 
+    setExpandedGoalIds((currentIds) => {
+      return currentIds.filter((id) => id !== goalId)
+    })
+
     if (editingGoalId === goalId) {
       resetForm()
+      setIsFormVisible(false)
     }
 
     setMessage('Meta removida.')
@@ -264,22 +365,26 @@ function GoalsPage() {
             </p>
           </div>
 
-          <a className="goals-hero-action" href="#goal-form">
+          <button
+            className="goals-hero-action"
+            type="button"
+            onClick={handleOpenForm}
+          >
             + Nova meta
-          </a>
+          </button>
         </article>
 
         <section className="goals-summary-grid">
           <article className="goals-summary-card is-balance">
             <span>Saldo atual</span>
             <strong>{formatCurrency(currentBalance)}</strong>
-            <p>Valor usado como base para simular o progresso das metas.</p>
+            <p>Base usada para simular o progresso das metas.</p>
           </article>
 
           <article className="goals-summary-card">
             <span>Metas ativas</span>
             <strong>{activeGoals}</strong>
-            <p>{goalsWithProgress.length} metas cadastradas no total.</p>
+            <p>{goalsWithProgress.length} objetivos cadastrados.</p>
           </article>
 
           <article className="goals-summary-card">
@@ -292,7 +397,7 @@ function GoalsPage() {
           </article>
 
           <article className="goals-summary-card">
-            <span>Prazo mais próximo</span>
+            <span>Próximo prazo</span>
             <strong>
               {nearestGoal ? formatDate(nearestGoal.deadline) : '-'}
             </strong>
@@ -300,8 +405,42 @@ function GoalsPage() {
           </article>
         </section>
 
-        <section className="goals-content-grid">
-          <article className="goals-card goals-form-card" id="goal-form">
+        <section className="goals-mobile-summary-card">
+          <div className="goals-mobile-balance">
+            <span>Saldo atual</span>
+            <strong>{formatCurrency(currentBalance)}</strong>
+          </div>
+
+          <div className="goals-mobile-summary-row">
+            <div>
+              <span>Metas</span>
+              <strong>{activeGoals} ativas</strong>
+            </div>
+
+            <div>
+              <span>Progresso</span>
+              <strong>{averageProgress.toFixed(0)}% médio</strong>
+            </div>
+          </div>
+
+          <div className="goals-mini-progress">
+            <div style={{ width: `${averageProgress}%` }} />
+          </div>
+
+          <div className="goals-mobile-nearest">
+            <span>Próximo prazo</span>
+            <strong>{nearestGoal ? nearestGoal.title : 'Nenhuma meta'}</strong>
+            <small>{nearestGoal ? formatDate(nearestGoal.deadline) : '-'}</small>
+          </div>
+        </section>
+
+        <section className="goals-workspace">
+          <article
+            className={`goals-card goals-form-card ${
+              isFormVisible ? 'is-visible' : 'is-mobile-collapsed'
+            }`}
+            id="goal-form"
+          >
             <div className="goals-card-header">
               <div>
                 <p className="section-label">
@@ -310,10 +449,19 @@ function GoalsPage() {
 
                 <h2>
                   {editingGoalId
-                    ? 'Atualize sua meta financeira'
-                    : 'Cadastre um novo objetivo'}
+                    ? 'Atualize seu objetivo'
+                    : 'Cadastre um objetivo'}
                 </h2>
               </div>
+
+              <button
+                className="goals-form-close"
+                type="button"
+                aria-label="Fechar formulário"
+                onClick={handleCloseForm}
+              >
+                ×
+              </button>
             </div>
 
             <form className="goals-form" onSubmit={handleSubmit}>
@@ -328,28 +476,30 @@ function GoalsPage() {
                 />
               </label>
 
-              <label>
-                Valor alvo
-                <input
-                  type="number"
-                  name="targetValue"
-                  min="0"
-                  step="0.01"
-                  placeholder="5000.00"
-                  value={formData.targetValue}
-                  onChange={handleChange}
-                />
-              </label>
+              <div className="goals-form-row">
+                <label>
+                  Valor alvo
+                  <input
+                    type="number"
+                    name="targetValue"
+                    min="0"
+                    step="0.01"
+                    placeholder="5000.00"
+                    value={formData.targetValue}
+                    onChange={handleChange}
+                  />
+                </label>
 
-              <label>
-                Prazo
-                <input
-                  type="date"
-                  name="deadline"
-                  value={formData.deadline}
-                  onChange={handleChange}
-                />
-              </label>
+                <label>
+                  Prazo
+                  <input
+                    type="date"
+                    name="deadline"
+                    value={formData.deadline}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
 
               <label>
                 Descrição
@@ -365,15 +515,13 @@ function GoalsPage() {
               {message && <p className="goals-message">{message}</p>}
 
               <div className="goals-form-actions">
-                {editingGoalId && (
-                  <button
-                    className="goals-secondary-button"
-                    type="button"
-                    onClick={resetForm}
-                  >
-                    Cancelar edição
-                  </button>
-                )}
+                <button
+                  className="goals-secondary-button"
+                  type="button"
+                  onClick={handleCloseForm}
+                >
+                  Cancelar
+                </button>
 
                 <button className="primary-btn" type="submit">
                   {editingGoalId ? 'Salvar alterações' : 'Criar meta'}
@@ -388,6 +536,14 @@ function GoalsPage() {
                 <p className="section-label">Acompanhamento</p>
                 <h2>Suas metas</h2>
               </div>
+
+              <button
+                className="goals-list-action"
+                type="button"
+                onClick={handleOpenForm}
+              >
+                + Nova
+              </button>
             </div>
 
             {goalsWithProgress.length === 0 ? (
@@ -396,55 +552,100 @@ function GoalsPage() {
               </p>
             ) : (
               <div className="goals-list">
-                {goalsWithProgress.map((goal) => (
-                  <article className="goal-item" key={goal.id}>
-                    <div className="goal-item-header">
-                      <div>
-                        <strong>{goal.title}</strong>
+                {goalsWithProgress.map((goal) => {
+                  const isExpanded = expandedGoalIds.includes(goal.id)
 
-                        <span>
-                          {formatCurrency(currentBalance)} /{' '}
-                          {formatCurrency(goal.targetValue)}
+                  return (
+                    <article
+                      className={`goal-item ${
+                        isExpanded ? 'is-expanded' : ''
+                      }`}
+                      key={goal.id}
+                    >
+                      <div className="goal-item-header">
+                        <div>
+                          <strong>{goal.title}</strong>
+
+                          <span>
+                            {formatCurrency(currentBalance)} de{' '}
+                            {formatCurrency(goal.targetValue)}
+                          </span>
+                        </div>
+
+                        <span className={`goal-status ${goal.status.className}`}>
+                          {goal.status.label}
                         </span>
                       </div>
 
-                      <span className={`goal-status ${goal.status.className}`}>
-                        {goal.status.label}
-                      </span>
-                    </div>
+                      <div className="goal-progress-row">
+                        <div className="goal-progress-bar">
+                          <div style={{ width: `${goal.progress}%` }} />
+                        </div>
 
-                    <div className="goal-progress-row">
-                      <div className="goal-progress-bar">
-                        <div style={{ width: `${goal.progress}%` }} />
+                        <strong>{goal.progress.toFixed(0)}%</strong>
                       </div>
 
-                      <strong>{goal.progress.toFixed(0)}%</strong>
-                    </div>
-
-                    <div className="goal-item-footer">
-                      <span>Falta {formatCurrency(goal.remainingValue)}</span>
-                      <span>Prazo: {formatDate(goal.deadline)}</span>
-                    </div>
-
-                    {goal.description && (
-                      <p className="goal-description">{goal.description}</p>
-                    )}
-
-                    <div className="goal-actions">
-                      <button type="button" onClick={() => handleEdit(goal)}>
-                        Editar
-                      </button>
-
                       <button
-                        className="is-danger"
+                        className="goal-details-toggle"
                         type="button"
-                        onClick={() => handleRemove(goal.id)}
+                        aria-expanded={isExpanded}
+                        onClick={() => toggleGoalDetails(goal.id)}
                       >
-                        Remover
+                        <span>
+                          {isExpanded ? 'Ocultar detalhes' : 'Ver detalhes'}
+                        </span>
+
+                        <strong>{isExpanded ? '−' : '+'}</strong>
                       </button>
-                    </div>
-                  </article>
-                ))}
+
+                      {isExpanded && (
+                        <div className="goal-details">
+                          <div className="goal-meta-grid">
+                            <div>
+                              <span>Falta</span>
+                              <strong>
+                                {formatCurrency(goal.remainingValue)}
+                              </strong>
+                            </div>
+
+                            <div>
+                              <span>Prazo</span>
+                              <strong>{formatDate(goal.deadline)}</strong>
+                            </div>
+
+                            <div>
+                              <span>Status do prazo</span>
+                              <strong>{formatDeadlineInfo(goal.deadline)}</strong>
+                            </div>
+                          </div>
+
+                          {goal.description && (
+                            <p className="goal-description">
+                              {goal.description}
+                            </p>
+                          )}
+
+                          <div className="goal-actions">
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(goal)}
+                            >
+                              Editar
+                            </button>
+
+                            <button
+                              className="is-danger"
+                              type="button"
+                              onClick={() => handleRemove(goal.id)}
+                            >
+                              Remover
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </article>
+                  )
+                })}
               </div>
             )}
           </article>
