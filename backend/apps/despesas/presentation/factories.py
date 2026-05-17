@@ -4,6 +4,7 @@ from apps.despesas.application.services import (
     ListDespesasService,
     RetrieveDespesaService,
     UpdateDespesaService,
+    GetTotalDespesasService
 )
 from apps.despesas.infrastructure.repositories import DespesaRepository
 
@@ -19,6 +20,8 @@ def list_despesas_service():
 def retrieve_despesa_service():
     return RetrieveDespesaService(DespesaRepository())
 
+def get_total_despesas_service():
+    return GetTotalDespesasService(DespesaRepository())
 
 def update_despesa_service():
     return UpdateDespesaService(DespesaRepository())

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import action
 
 from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import extend_schema
@@ -13,6 +14,7 @@ from apps.receitas.presentation.factories import (
     delete_receita_service,
     list_receitas_service,
     retrieve_receita_service,
+    get_total_receitas_service,
     update_receita_service,
 )
 from apps.receitas.presentation.serializers import ReceitaSerializer
@@ -92,10 +94,25 @@ class ReceitaViewSet(ViewSet):
             return Response(
                 {"error": "Receita not found"},
                 status=status.HTTP_404_NOT_FOUND
-            )
+                )
+    
 
         return Response(
             ReceitaSerializer(receita).data,
+            status=status.HTTP_200_OK
+        )
+        
+        
+    @extend_schema(
+        responses={200: ReceitaSerializer, 404: dict},
+    )
+    @action(detail=False, methods=["get"], url_path="total")
+    def total(self, request):
+        service = get_total_receitas_service()
+        total = service.execute(request.user)
+
+        return Response(
+            {"total": total},
             status=status.HTTP_200_OK
         )
 
@@ -145,3 +162,6 @@ class ReceitaViewSet(ViewSet):
             )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    
+    

@@ -43,6 +43,13 @@ class RetrieveDespesaService:
 
         return despesa
 
+class GetTotalDespesasService:
+    def __init__(self, repository: UserScopedRepositoryInterface):
+        self.repository = repository
+
+    def execute(self, user):
+        return self.repository.get_total_sum_by_user(user)
+
 
 class UpdateDespesaService:
 

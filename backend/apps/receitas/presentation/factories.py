@@ -4,6 +4,7 @@ from apps.receitas.application.services import (
     ListReceitasService,
     RetrieveReceitaService,
     UpdateReceitaService,
+    GetTotalReceitasService
 )
 from apps.receitas.infrastructure.repositories import ReceitaRepository
 
@@ -18,6 +19,9 @@ def list_receitas_service():
 
 def retrieve_receita_service():
     return RetrieveReceitaService(ReceitaRepository())
+
+def get_total_receitas_service():
+    return GetTotalReceitasService(ReceitaRepository())
 
 
 def update_receita_service():
