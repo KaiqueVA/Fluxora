@@ -21,7 +21,10 @@ function HeroSection() {
         </div>
       </div>
 
-      <div className="product-visual" aria-label="Prévia visual da plataforma Fluxora">
+      <div
+        className="product-visual"
+        aria-label="Prévia visual da plataforma Fluxora"
+      >
         <div className="platform-preview">
           <div className="preview-topbar">
             <div className="preview-brand">
@@ -36,13 +39,15 @@ function HeroSection() {
             <span className="preview-status">Online</span>
           </div>
 
-          <div className="preview-insight-card">
-            <div>
+          <p className="preview-mobile-title">Prévia da plataforma</p>
+
+          <div className="preview-highlight-grid">
+            <div className="preview-insight-card">
               <span>Insight financeiro</span>
               <strong>Alimentação concentra 38% das despesas.</strong>
             </div>
 
-            <div>
+            <div className="preview-balance-card">
               <span>Saldo atual</span>
               <strong>R$ 2.450</strong>
             </div>
@@ -57,6 +62,17 @@ function HeroSection() {
             <div>
               <span>Despesas</span>
               <strong>R$ 2.750</strong>
+            </div>
+          </div>
+
+          <div className="preview-mobile-category">
+            <div>
+              <span>Maior gasto</span>
+              <strong>Alimentação · 38%</strong>
+            </div>
+
+            <div className="preview-bar">
+              <div style={{ width: '82%' }} />
             </div>
           </div>
 

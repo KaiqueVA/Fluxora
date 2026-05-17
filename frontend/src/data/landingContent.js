@@ -1,35 +1,44 @@
 export const featureCards = [
   {
-    title: 'Comprovantes organizados',
-    text: 'Envie fotos, PDFs ou scans para transformar registros soltos em informações financeiras estruturadas.',
-  },
-  {
-    title: 'Renda e entradas',
-    text: 'Cadastre salário, serviços, renda extra e ganhos recorrentes para alimentar o fluxo de caixa.',
-  },
-  {
+    icon: '▦',
     title: 'Dashboard financeiro',
-    text: 'Veja saldo mensal, categorias de gasto, histórico, recorrências e pontos de desperdício.',
+    text: 'Acompanhe saldo, receitas, despesas e indicadores principais em uma visão geral simples.',
+  },
+  {
+    icon: '+',
+    title: 'Receitas e despesas',
+    text: 'Registre entradas e saídas para entender como seu dinheiro se movimenta ao longo do tempo.',
+  },
+  {
+    icon: '◈',
+    title: 'Comprovantes',
+    text: 'Organize documentos financeiros para manter registros importantes em um só lugar.',
   },
 ]
 
 export const steps = [
-  'Importe comprovantes',
-  'Registre fontes de renda',
-  'Acompanhe entradas e saídas',
+  'Cadastre suas receitas',
+  'Registre suas despesas',
+  'Acompanhe seus insights',
 ]
 
 export const metrics = [
   {
-    value: '4',
-    label: 'módulos principais',
+    value: '53%',
+    label: 'Saúde financeira',
+    progress: 53,
+    text: 'Visualize quanto da renda está comprometida pelas despesas cadastradas.',
+  },
+  {
+    value: '38%',
+    label: 'Maior categoria',
+    progress: 38,
+    text: 'Identifique quais categorias concentram a maior parte dos seus gastos.',
   },
   {
     value: '30 dias',
-    label: 'de visão mensal',
-  },
-  {
-    value: '24 horas',
-    label: 'de acesso ao histórico',
+    label: 'Histórico recente',
+    progress: 72,
+    text: 'Acompanhe movimentações recentes para perceber mudanças no seu padrão financeiro.',
   },
 ]

@@ -4,5 +4,6 @@
 @import './styles/platform.css';
 @import './styles/dashboard.css';
 @import './styles/transactions.css';
+@import './styles/receipts.css';
 @import './styles/theme.css';
 @import './styles/responsive.css';

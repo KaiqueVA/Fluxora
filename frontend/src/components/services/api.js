@@ -1,6 +1,7 @@
 const API_BASE_URL = 'http://localhost:8000/api'
 const REFRESH_ENDPOINT = '/users/token/refresh/'
 
+let refreshTokenPromise = null
 function getAccessToken() {
   return localStorage.getItem('accessToken')
 }
@@ -25,12 +26,21 @@ function saveAuthData(data) {
   if (data.user_id) {
     localStorage.setItem('userId', data.user_id)
   }
+  if (data.name) {
+    localStorage.setItem('userName', data.name)
+  }
+
+  if (data.email) {
+    localStorage.setItem('userEmail', data.email)
+  }
 }
 
 function clearAuthStorage() {
   localStorage.removeItem('accessToken')
   localStorage.removeItem('refreshToken')
   localStorage.removeItem('userId')
+  localStorage.removeItem('userName')
+  localStorage.removeItem('userEmail')
 }
 
 function getAuthHeaders() {
@@ -61,6 +71,14 @@ function getErrorMessage(data) {
   )
 }
 
+function canTryRefresh(endpoint, status, shouldRetry) {
+  const isAuthEndpoint =
+    endpoint === '/users/login/' ||
+    endpoint === '/users/register/' ||
+    endpoint === REFRESH_ENDPOINT
+
+  return status === 401 && shouldRetry && !isAuthEndpoint
+}
 async function refreshAccessToken() {
   const refreshToken = getRefreshToken()
 
@@ -95,6 +113,15 @@ async function refreshAccessToken() {
   return data.access
 }
 
+async function getFreshAccessToken() {
+  if (!refreshTokenPromise) {
+    refreshTokenPromise = refreshAccessToken().finally(() => {
+      refreshTokenPromise = null
+    })
+  }
+
+  return refreshTokenPromise
+}
 async function request(endpoint, options = {}, shouldRetry = true) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -105,8 +132,8 @@ async function request(endpoint, options = {}, shouldRetry = true) {
     },
   })
 
-  if (response.status === 401 && shouldRetry) {
-    await refreshAccessToken()
+  if (canTryRefresh(endpoint, response.status, shouldRetry)) {
+    await getFreshAccessToken()
 
     return request(endpoint, options, false)
   }
@@ -130,7 +157,10 @@ export const authService = {
       }),
     })
 
-    saveAuthData(data)
+    saveAuthData({
+      ...data,
+      email: data.email || credentials.email,
+    })
 
     return data
   },
