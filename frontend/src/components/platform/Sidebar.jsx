@@ -23,31 +23,50 @@ const navItems = [
   },
 ]
 
-function Sidebar() {
+function Sidebar({ isOpen = false, onClose = () => {} }) {
   const navigate = useNavigate()
 
   function handleLogout() {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('userId')
+    localStorage.removeItem('userName')
+    localStorage.removeItem('userEmail')
 
+    onClose()
     navigate('/login')
   }
 
   return (
-    <aside className="platform-sidebar">
-      <NavLink className="platform-brand" to="/dashboard">
-        <span className="brand-mark">F</span>
+    <aside className={`platform-sidebar ${isOpen ? 'is-open' : ''}`}>
+      <div className="sidebar-header">
+        <NavLink className="platform-brand" to="/dashboard" onClick={onClose}>
+          <span className="brand-mark">F</span>
 
-        <div className="brand-text">
-          <strong>Fluxora</strong>
-          <small>Finance Platform</small>
-        </div>
-      </NavLink>
+          <div className="brand-text">
+            <strong>Fluxora</strong>
+            <small>Finance Platform</small>
+          </div>
+        </NavLink>
+
+        <button
+          className="platform-sidebar-close"
+          type="button"
+          aria-label="Fechar menu"
+          onClick={onClose}
+        >
+          ×
+        </button>
+      </div>
 
       <nav className="platform-nav" aria-label="Navegação principal">
         {navItems.map((item) => (
-          <NavLink key={item.path} to={item.path} title={item.label}>
+          <NavLink
+            key={item.path}
+            to={item.path}
+            title={item.label}
+            onClick={onClose}
+          >
             <span className="nav-icon">{item.icon}</span>
             <span className="nav-label">{item.label}</span>
           </NavLink>

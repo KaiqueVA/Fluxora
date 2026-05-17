@@ -27,13 +27,18 @@ function ThemeToggle() {
       className="theme-toggle"
       type="button"
       onClick={handleToggleTheme}
-      aria-label="Alternar tema"
+      aria-label={
+        theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'
+      }
+      title={theme === 'light' ? 'Modo escuro' : 'Modo claro'}
     >
       <span className="theme-toggle-icon">
         {theme === 'light' ? '🌙' : '☀️'}
       </span>
 
-      <span>{theme === 'light' ? 'Escuro' : 'Claro'}</span>
+      <span className="theme-toggle-label">
+        {theme === 'light' ? 'Escuro' : 'Claro'}
+      </span>
     </button>
   )
 }
