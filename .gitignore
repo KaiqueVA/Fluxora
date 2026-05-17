@@ -39,3 +39,5 @@ staticfiles/
 # IDE
 .vscode/
 .idea/
+
+.zip
