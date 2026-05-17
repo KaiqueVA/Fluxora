@@ -24,10 +24,19 @@ class ReceitaRepository(UserScopedRepositoryInterface):
     def get_total_sum_by_user(self, user):
         receitas = Receita.objects.filter(user=user).values_list('value', flat=True)
         return sum(receitas, Decimal("0.00"))
+    
+    
+    def get_total_sum_by_user_between_dates(self, user, start_date, end_date):
+        receitas = Receita.objects.filter(
+            user=user,
+            date__range=(start_date, end_date)
+        )
+        total = Decimal('0.00')
         
-    def get_total_sum_by_user(self, user):
-        receitas = Receita.objects.filter(user=user).values_list('value', flat=True)
-        return sum(receitas, Decimal("0.00"))
+        for receita in receitas:
+            total += receita.value
+            
+        return total
     
     
     def update(self, receita, receita_entity):

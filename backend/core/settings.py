@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.receitas.apps.ReceitasConfig',
     'apps.despesas.apps.DespesasConfig',
+    'apps.saldo.apps.SaldoConfig',
 ]
 
 MIDDLEWARE = [
