@@ -12,6 +12,12 @@ function getAuthHeaders() {
   }
 }
 
+function clearAuthStorage() {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  localStorage.removeItem('userId')
+}
+
 async function request(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -31,6 +37,7 @@ async function request(endpoint, options = {}) {
       data?.password?.[0] ||
       data?.confirm_password?.[0] ||
       data?.description?.[0] ||
+      data?.category?.[0] ||
       data?.value?.[0] ||
       data?.date?.[0] ||
       data?.non_field_errors?.[0] ||
@@ -62,6 +69,10 @@ export const authService = {
         confirm_password: userData.confirm_password,
       }),
     })
+  },
+
+  logout() {
+    clearAuthStorage()
   },
 }
 

@@ -71,6 +71,16 @@ function ReceitasPage() {
     }))
   }
 
+  function handleCloseForm() {
+    setIsFormOpen(false)
+    setError('')
+    setFormData({
+      description: '',
+      value: '',
+      date: '',
+    })
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
 
@@ -102,6 +112,7 @@ function ReceitasPage() {
   async function handleDelete(id) {
     try {
       setError('')
+
       await receitasService.remove(id)
       await loadReceitas()
     } catch (error) {
@@ -109,12 +120,30 @@ function ReceitasPage() {
     }
   }
 
+  const sortedReceitas = useMemo(() => {
+    return [...receitas].sort((a, b) => {
+      return new Date(`${b.date}T00:00:00`) - new Date(`${a.date}T00:00:00`)
+    })
+  }, [receitas])
+
   const totalReceitas = receitas.reduce((total, receita) => {
     return total + Number(receita.value || 0)
   }, 0)
 
   const averageReceita =
     receitas.length > 0 ? totalReceitas / receitas.length : 0
+
+  const biggestReceita = useMemo(() => {
+    if (receitas.length === 0) {
+      return null
+    }
+
+    return receitas.reduce((biggest, receita) => {
+      return Number(receita.value || 0) > Number(biggest.value || 0)
+        ? receita
+        : biggest
+    }, receitas[0])
+  }, [receitas])
 
   const monthlyRevenue = useMemo(() => {
     const groupedRevenue = receitas.reduce((accumulator, receita) => {
@@ -126,10 +155,13 @@ function ReceitasPage() {
       return accumulator
     }, {})
 
-    return Object.entries(groupedRevenue).map(([month, value]) => ({
-      month,
-      value,
-    }))
+    return Object.entries(groupedRevenue)
+      .map(([month, value]) => ({
+        month,
+        value,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6)
   }, [receitas])
 
   const maxMonthlyValue = Math.max(
@@ -137,55 +169,64 @@ function ReceitasPage() {
     1,
   )
 
+  const biggestPercentage =
+    totalReceitas > 0 && biggestReceita
+      ? (Number(biggestReceita.value || 0) / totalReceitas) * 100
+      : 0
+
+  function getIncomeInsight() {
+    if (receitas.length === 0) {
+      return 'Cadastre sua primeira receita para começar a acompanhar suas entradas financeiras.'
+    }
+
+    if (biggestReceita) {
+      return `Sua maior entrada foi ${
+        biggestReceita.description
+      }, representando ${biggestPercentage.toFixed(0)}% do total recebido.`
+    }
+
+    return 'Acompanhe suas entradas para entender melhor a evolução das suas receitas.'
+  }
+
   return (
     <PlatformLayout>
       <Topbar title="Receitas" label="Entradas financeiras" />
 
-      <section className="revenue-page">
-        <section className="revenue-overview">
-          <article className="revenue-kpi primary">
-            <span>Total recebido</span>
-            <strong>{formatCurrency(totalReceitas)}</strong>
-            <p>Soma das entradas cadastradas.</p>
-          </article>
+      <section className="income-page">
+        {error && !isFormOpen && <p className="auth-error">{error}</p>}
 
-          <article className="revenue-kpi">
-            <span>Receitas</span>
-            <strong>{receitas.length}</strong>
-            <p>Registros encontrados.</p>
-          </article>
-
-          <article className="revenue-kpi">
-            <span>Média por receita</span>
-            <strong>{formatCurrency(averageReceita)}</strong>
-            <p>Valor médio das entradas.</p>
-          </article>
-        </section>
-
-        <section className="revenue-actions-card">
-          <div className="revenue-actions-header">
-            <div>
-              <p className="section-label">Cadastro</p>
-              <h2>Nova receita</h2>
-            </div>
-
-            <button
-              className="secondary-action-button"
-              type="button"
-              onClick={() => setIsFormOpen((currentValue) => !currentValue)}
-            >
-              {isFormOpen ? 'Fechar' : 'Adicionar receita'}
-            </button>
+        <article className="income-hero">
+          <div>
+            <p className="section-label">Total recebido</p>
+            <h2>{formatCurrency(totalReceitas)}</h2>
+            <p>{getIncomeInsight()}</p>
           </div>
 
-          {isFormOpen && (
-            <form className="revenue-form compact" onSubmit={handleSubmit}>
+          <button
+            className="income-add-button"
+            type="button"
+            onClick={() => setIsFormOpen((currentValue) => !currentValue)}
+          >
+            {isFormOpen ? 'Fechar' : '+ Adicionar receita'}
+          </button>
+        </article>
+
+        {isFormOpen && (
+          <article className="income-form-card">
+            <div className="income-card-header">
+              <div>
+                <p className="section-label">Nova entrada</p>
+                <h2>Cadastrar receita</h2>
+              </div>
+            </div>
+
+            <form className="income-form" onSubmit={handleSubmit}>
               <label>
                 Descrição
                 <input
                   type="text"
                   name="description"
-                  placeholder="Ex: Salário, freelance..."
+                  placeholder="Ex: Salário mensal"
                   value={formData.description}
                   onChange={handleChange}
                   required
@@ -197,7 +238,7 @@ function ReceitasPage() {
                 <input
                   type="number"
                   name="value"
-                  placeholder="2500.00"
+                  placeholder="5200.00"
                   value={formData.value}
                   onChange={handleChange}
                   min="0"
@@ -219,22 +260,60 @@ function ReceitasPage() {
 
               {error && <p className="auth-error">{error}</p>}
 
-              <button
-                className="primary-btn"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Salvando...' : 'Salvar'}
-              </button>
+              <div className="income-form-actions">
+                <button
+                  className="income-cancel-button"
+                  type="button"
+                  onClick={handleCloseForm}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="primary-btn"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Salvando...' : 'Salvar receita'}
+                </button>
+              </div>
             </form>
-          )}
+          </article>
+        )}
 
-          {!isFormOpen && error && <p className="auth-error">{error}</p>}
-        </section>
+        <section className="income-grid">
+          <article className="income-card income-summary-card">
+            <div className="income-card-header">
+              <div>
+                <p className="section-label">Resumo</p>
+                <h2>Indicadores</h2>
+              </div>
+            </div>
 
-        <section className="revenue-content-grid">
-          <article className="revenue-card revenue-chart-card">
-            <div className="revenue-card-header">
+            <div className="income-summary-list">
+              <div>
+                <span>Média por receita</span>
+                <strong>{formatCurrency(averageReceita)}</strong>
+              </div>
+
+              <div>
+                <span>Maior receita</span>
+                <strong>
+                  {biggestReceita
+                    ? formatCurrency(biggestReceita.value)
+                    : formatCurrency(0)}
+                </strong>
+              </div>
+
+              <div>
+                <span>Registros</span>
+                <strong>{receitas.length}</strong>
+              </div>
+            </div>
+          </article>
+
+          <article className="income-card">
+            <div className="income-card-header">
               <div>
                 <p className="section-label">Visualização</p>
                 <h2>Receitas por mês</h2>
@@ -242,19 +321,18 @@ function ReceitasPage() {
             </div>
 
             {monthlyRevenue.length === 0 ? (
-              <p className="revenue-empty">Nenhum dado para visualizar.</p>
+              <p className="income-empty">Nenhum dado para visualizar.</p>
             ) : (
-              <div className="revenue-chart">
+              <div className="income-month-list">
                 {monthlyRevenue.map((item) => (
-                  <div className="revenue-chart-item" key={item.month}>
-                    <div className="revenue-chart-label">
+                  <div className="income-month-item" key={item.month}>
+                    <div className="income-month-label">
                       <span>{item.month}</span>
                       <strong>{formatCurrency(item.value)}</strong>
                     </div>
 
-                    <div className="revenue-chart-track">
+                    <div className="income-month-track">
                       <div
-                        className="revenue-chart-fill"
                         style={{
                           width: `${Math.max(
                             (item.value / maxMonthlyValue) * 100,
@@ -268,45 +346,46 @@ function ReceitasPage() {
               </div>
             )}
           </article>
-
-          <article className="revenue-card revenue-list-card">
-            <div className="revenue-card-header">
-              <div>
-                <p className="section-label">Histórico</p>
-                <h2>Receitas cadastradas</h2>
-              </div>
-            </div>
-
-            {isLoading ? (
-              <p className="revenue-empty">Carregando receitas...</p>
-            ) : receitas.length === 0 ? (
-              <p className="revenue-empty">
-                Nenhuma receita cadastrada até o momento.
-              </p>
-            ) : (
-              <div className="revenue-list">
-                {receitas.map((receita) => (
-                  <div className="revenue-list-item" key={receita.id}>
-                    <div>
-                      <strong>{receita.description}</strong>
-                      <span>{formatDate(receita.date)}</span>
-                    </div>
-
-                    <div className="revenue-list-value">
-                      <strong>{formatCurrency(receita.value)}</strong>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(receita.id)}
-                      >
-                        Remover
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </article>
         </section>
+
+        <article className="income-card">
+          <div className="income-card-header">
+            <div>
+              <p className="section-label">Histórico</p>
+              <h2>Entradas recentes</h2>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <p className="income-empty">Carregando receitas...</p>
+          ) : sortedReceitas.length === 0 ? (
+            <p className="income-empty">
+              Nenhuma receita cadastrada até o momento.
+            </p>
+          ) : (
+            <div className="income-history-list">
+              {sortedReceitas.map((receita) => (
+                <div className="income-history-item" key={receita.id}>
+                  <div>
+                    <strong>{receita.description}</strong>
+                    <span>{formatDate(receita.date)}</span>
+                  </div>
+
+                  <div className="income-history-value">
+                    <strong>{formatCurrency(receita.value)}</strong>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(receita.id)}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </article>
       </section>
     </PlatformLayout>
   )
