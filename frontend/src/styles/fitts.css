@@ -1,0 +1,334 @@
+/* =========================
+   FITTS LAW / USABILITY
+   Alvos clicáveis maiores,
+   espaçamento confortável
+   e foco visual consistente
+========================= */
+
+:root {
+  --touch-target-min: 44px;
+  --touch-target-mobile: 48px;
+  --touch-gap: 10px;
+  --touch-gap-large: 14px;
+}
+
+/* Base para elementos interativos */
+:where(button, a, input, textarea, select, [role='button']) {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Foco visível global */
+:where(button, a, input, textarea, select, [role='button']):focus-visible {
+  outline: 3px solid rgba(127, 214, 196, 0.36);
+  outline-offset: 3px;
+}
+
+/* Botões desabilitados */
+:where(button, .primary-btn, .secondary-btn):disabled,
+:where(button, .primary-btn, .secondary-btn)[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.64;
+  transform: none !important;
+  box-shadow: none;
+}
+
+/* =========================
+   MARCA / NAVEGAÇÃO
+========================= */
+
+.brand,
+.auth-brand,
+.platform-brand {
+  min-height: var(--touch-target-min);
+}
+
+.site-nav a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.platform-nav a {
+  min-height: 50px;
+}
+
+.platform-sidebar-close,
+.mobile-menu-button,
+.theme-toggle,
+.user-pill {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+/* =========================
+   BOTÕES PRINCIPAIS
+========================= */
+
+.primary-btn,
+.secondary-btn,
+.logout-button,
+.income-add-button,
+.expense-add-button,
+.receipts-hero-action,
+.goals-hero-action,
+.goals-list-action,
+.dashboard-goals-link,
+.clean-goals-cta,
+.clean-goals-empty a {
+  min-height: var(--touch-target-min);
+}
+
+/* Mantém links/botões de CTA com área confortável */
+.action-row .primary-btn,
+.action-row .secondary-btn,
+.access-actions .primary-btn,
+.access-actions .secondary-btn {
+  min-height: var(--touch-target-min);
+  padding-inline: 18px;
+}
+
+/* =========================
+   FORMULÁRIOS
+========================= */
+
+.auth-form input,
+.platform-form input,
+.income-form input,
+.expense-form input,
+.receipts-form input,
+.goals-form input,
+.goals-form textarea {
+  min-height: var(--touch-target-min);
+}
+
+.goals-form textarea {
+  min-height: 112px;
+}
+
+.auth-form .primary-btn,
+.income-form-actions .primary-btn,
+.expense-form-actions .primary-btn,
+.receipts-upload-actions .primary-btn,
+.goals-form-actions .primary-btn {
+  min-height: var(--touch-target-min);
+}
+
+.income-cancel-button,
+.expense-cancel-button,
+.receipts-secondary-button,
+.goals-secondary-button {
+  min-height: var(--touch-target-min);
+}
+
+/* Melhora distância entre botões de ação */
+.income-form-actions,
+.expense-form-actions,
+.receipts-upload-actions,
+.goals-form-actions,
+.goal-actions {
+  gap: var(--touch-gap);
+}
+
+/* =========================
+   AÇÕES EM LISTAS
+========================= */
+
+.income-history-value button,
+.expense-history-value button,
+.goal-actions button,
+.goal-details-toggle {
+  min-height: var(--touch-target-min);
+}
+
+.goal-details-toggle {
+  padding-inline: 14px;
+}
+
+.goal-details-toggle strong {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.goal-actions button {
+  min-width: 96px;
+}
+
+/* Ação destrutiva com alvo maior */
+.goal-actions button.is-danger,
+.income-history-value button,
+.expense-history-value button {
+  padding-inline: 14px;
+}
+
+/* =========================
+   CARDS CLICÁVEIS / CTAs
+========================= */
+
+.clean-goals-cta,
+.dashboard-goals-link,
+.clean-goals-empty a,
+.goals-list-action {
+  padding-inline: 14px;
+}
+
+/* Evita botões pequenos demais em cards da dashboard */
+.clean-hero-stat,
+.clean-goal-item,
+.clean-transaction,
+.clean-category-item {
+  min-height: 44px;
+}
+
+/* =========================
+   COMPROVANTES
+========================= */
+
+.receipts-upload-zone {
+  cursor: pointer;
+}
+
+.receipts-selected-row,
+.receipts-history-item {
+  min-height: var(--touch-target-min);
+}
+
+.receipts-upload-actions {
+  gap: var(--touch-gap);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 760px) {
+  .primary-btn,
+  .secondary-btn,
+  .auth-form .primary-btn,
+  .income-add-button,
+  .expense-add-button,
+  .receipts-hero-action,
+  .goals-hero-action,
+  .goals-list-action,
+  .dashboard-goals-link,
+  .clean-goals-cta,
+  .clean-goals-empty a,
+  .income-cancel-button,
+  .expense-cancel-button,
+  .receipts-secondary-button,
+  .goals-secondary-button {
+    min-height: var(--touch-target-mobile);
+  }
+
+  .mobile-menu-button,
+  .platform-sidebar-close,
+  .theme-toggle,
+  .goals-form-close {
+    min-width: var(--touch-target-mobile);
+    min-height: var(--touch-target-mobile);
+  }
+
+  .site-nav a {
+    min-height: var(--touch-target-min);
+  }
+
+  .goal-details-toggle {
+    min-height: var(--touch-target-mobile);
+  }
+
+  .goal-actions button,
+  .income-history-value button,
+  .expense-history-value button {
+    min-height: var(--touch-target-mobile);
+  }
+
+  .income-form-actions,
+  .expense-form-actions,
+  .receipts-upload-actions,
+  .goals-form-actions,
+  .goal-actions {
+    gap: var(--touch-gap-large);
+  }
+
+  .goal-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .goal-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .income-history-value,
+  .expense-history-value {
+    gap: var(--touch-gap);
+  }
+}
+
+@media (max-width: 640px) {
+  .auth-form .primary-btn,
+  .income-add-button,
+  .expense-add-button,
+  .receipts-hero-action,
+  .goals-hero-action,
+  .goals-list-action,
+  .dashboard-goals-link,
+  .clean-goals-cta,
+  .clean-goals-empty a,
+  .receipts-upload-actions .primary-btn,
+  .receipts-secondary-button,
+  .goals-form-actions .primary-btn,
+  .goals-secondary-button {
+    width: 100%;
+  }
+
+  .income-form-actions,
+  .expense-form-actions,
+  .receipts-upload-actions,
+  .goals-form-actions {
+    width: 100%;
+  }
+
+  .income-history-value button,
+  .expense-history-value button {
+    width: 100%;
+  }
+
+  .clean-goal-footer,
+  .clean-panel-header-row {
+    gap: var(--touch-gap);
+  }
+}
+
+@media (max-width: 420px) {
+  .goal-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .goal-actions button {
+    width: 100%;
+  }
+
+  .site-nav a,
+  .brand,
+  .auth-brand,
+  .platform-brand {
+    min-height: var(--touch-target-min);
+  }
+}
+
+/* =========================
+   HOVER APENAS EM DISPOSITIVOS
+   COM MOUSE
+========================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .goal-actions button:hover,
+  .goal-details-toggle:hover,
+  .dashboard-goals-link:hover,
+  .clean-goals-cta:hover,
+  .clean-goals-empty a:hover,
+  .goals-list-action:hover {
+    transform: translateY(-1px);
+  }
+}
