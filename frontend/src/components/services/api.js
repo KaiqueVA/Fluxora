@@ -48,6 +48,7 @@ function getAuthHeaders() {
 function getErrorMessage(data) {
   return (
     data?.detail ||
+    data?.name?.[0] ||
     data?.email?.[0] ||
     data?.password?.[0] ||
     data?.confirm_password?.[0] ||
@@ -138,6 +139,7 @@ export const authService = {
     return request('/users/register/', {
       method: 'POST',
       body: JSON.stringify({
+        name: userData.name,
         email: userData.email,
         password: userData.password,
         confirm_password: userData.confirm_password,
