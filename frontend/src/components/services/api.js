@@ -2,7 +2,6 @@ const API_BASE_URL = 'http://localhost:8000/api'
 const REFRESH_ENDPOINT = '/users/token/refresh/'
 
 let refreshTokenPromise = null
-
 function getAccessToken() {
   return localStorage.getItem('accessToken')
 }
@@ -27,7 +26,6 @@ function saveAuthData(data) {
   if (data.user_id) {
     localStorage.setItem('userId', data.user_id)
   }
-
   if (data.name) {
     localStorage.setItem('userName', data.name)
   }
@@ -81,7 +79,6 @@ function canTryRefresh(endpoint, status, shouldRetry) {
 
   return status === 401 && shouldRetry && !isAuthEndpoint
 }
-
 async function refreshAccessToken() {
   const refreshToken = getRefreshToken()
 
@@ -125,7 +122,6 @@ async function getFreshAccessToken() {
 
   return refreshTokenPromise
 }
-
 async function request(endpoint, options = {}, shouldRetry = true) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -169,10 +165,11 @@ export const authService = {
     return data
   },
 
-  register(userData) {
+  async register(userData) {
     return request('/users/register/', {
       method: 'POST',
       body: JSON.stringify({
+        name: userData.name,
         email: userData.email,
         password: userData.password,
         confirm_password: userData.confirm_password,

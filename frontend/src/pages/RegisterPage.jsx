@@ -1,11 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '../components/services/api'
 
 function RegisterPage() {
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
     confirm_password: '',
@@ -13,7 +14,7 @@ function RegisterPage() {
 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -29,30 +30,37 @@ function RegisterPage() {
 
     if (formData.password !== formData.confirm_password) {
       setError('As senhas não conferem.')
-      setSuccess('')
       return
     }
 
     try {
-      setIsLoading(true)
+      setIsSubmitting(true)
       setError('')
       setSuccess('')
 
       await authService.register({
+        name: formData.name,
         email: formData.email,
         password: formData.password,
         confirm_password: formData.confirm_password,
       })
 
-      setSuccess('Conta criada com sucesso. Redirecionando para o login...')
+      setSuccess('Cadastro criado com sucesso. Redirecionando para o login...')
+
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirm_password: '',
+      })
 
       setTimeout(() => {
         navigate('/login')
-      }, 1200)
+      }, 900)
     } catch (error) {
       setError(error.message)
     } finally {
-      setIsLoading(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -61,19 +69,31 @@ function RegisterPage() {
       <section className="auth-card">
         <Link className="auth-brand" to="/">
           <span className="brand-mark">F</span>
-          Fluxora
+          <span>Fluxora</span>
         </Link>
 
         <div className="auth-header">
-          <p className="section-label">Criar acesso</p>
           <h1>Crie sua conta</h1>
+
           <p>
-            Cadastre-se para organizar receitas, despesas e comprovantes em uma
-            plataforma financeira centralizada.
+            Cadastre-se para organizar receitas, despesas e acompanhar sua
+            evolução financeira em uma plataforma simples e visual.
           </p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            Nome
+            <input
+              type="text"
+              name="name"
+              placeholder="Seu nome"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
           <label>
             E-mail
             <input
@@ -82,7 +102,6 @@ function RegisterPage() {
               placeholder="seuemail@exemplo.com"
               value={formData.email}
               onChange={handleChange}
-              autoComplete="email"
               required
             />
           </label>
@@ -92,10 +111,9 @@ function RegisterPage() {
             <input
               type="password"
               name="password"
-              placeholder="Crie uma senha"
+              placeholder="Digite sua senha"
               value={formData.password}
               onChange={handleChange}
-              autoComplete="new-password"
               minLength={8}
               required
             />
@@ -106,10 +124,9 @@ function RegisterPage() {
             <input
               type="password"
               name="confirm_password"
-              placeholder="Repita sua senha"
+              placeholder="Confirme sua senha"
               value={formData.confirm_password}
               onChange={handleChange}
-              autoComplete="new-password"
               minLength={8}
               required
             />
@@ -118,22 +135,24 @@ function RegisterPage() {
           {error && <p className="auth-error">{error}</p>}
           {success && <p className="auth-success">{success}</p>}
 
-          <button className="primary-btn" type="submit" disabled={isLoading}>
-            {isLoading ? 'Criando conta...' : 'Criar conta'}
+          <button className="primary-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </button>
         </form>
 
         <p className="auth-footer">
-          Já tem conta? <Link to="/login">Entrar</Link>
+          Já tem uma conta? <Link to="/login">Entrar</Link>
         </p>
       </section>
 
       <section className="auth-side">
         <p className="eyebrow">Fluxora Web</p>
-        <h2>Comece sua organização financeira com clareza.</h2>
+
+        <h2>Comece a visualizar melhor sua vida financeira.</h2>
+
         <p>
-          Crie sua conta para acompanhar movimentações, visualizar seu fluxo de
-          caixa e transformar registros financeiros em informações úteis.
+          Registre suas entradas e saídas para transformar movimentações
+          financeiras em informações mais claras para tomada de decisão.
         </p>
       </section>
     </main>
