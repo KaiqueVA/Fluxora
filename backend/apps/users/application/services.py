@@ -16,7 +16,7 @@ class RegisterUserService:
     def __init__(self, repository: UserRepositoryInterface):
         self.repository = repository
 
-    def execute(self, email: str, password: str):
+    def execute(self, email: str, password: str, name: str):
         user_entity = UserEntity(email=email, password=password)
 
         if not user_entity.is_valid_email():
@@ -27,7 +27,7 @@ class RegisterUserService:
         if self.repository.get_by_email(email):
             raise UserAlreadyExistsException("Email already exists.")
 
-        return self.repository.create(email=email, password=password)
+        return self.repository.create(email=email, password=password, name=name)
 
 
 class LoginUserService:

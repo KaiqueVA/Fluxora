@@ -29,6 +29,7 @@ class RegisterView(APIView):
             user = self.get_service().execute(
                 email=serializer.validated_data["email"],
                 password=serializer.validated_data["password"],
+                name=serializer.validated_data["name"],
             )
         except (ValidationException, UserAlreadyExistsException) as error:
             return Response(
