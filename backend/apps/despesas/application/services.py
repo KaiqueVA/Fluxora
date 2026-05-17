@@ -1,11 +1,12 @@
 from apps.despesas.domain.entities import DespesaEntity
 from apps.despesas.domain.validators import DespesaValidator
 from apps.despesas.domain.exceptions import DespesaNotFoundException
+from apps.interfaces import UserScopedRepositoryInterface
 
 
 class CreateDespesaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, data, user):
@@ -22,7 +23,7 @@ class CreateDespesaService:
 
 class ListDespesasService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, user):
@@ -31,7 +32,7 @@ class ListDespesasService:
 
 class RetrieveDespesaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, despesa_id, user):
@@ -45,7 +46,7 @@ class RetrieveDespesaService:
 
 class UpdateDespesaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, despesa_id, data, user):
@@ -68,7 +69,7 @@ class UpdateDespesaService:
 
 class DeleteDespesaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, despesa_id, user):

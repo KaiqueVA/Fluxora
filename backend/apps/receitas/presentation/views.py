@@ -8,14 +8,13 @@ from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
 
-from apps.receitas.application.services import (
-    CreateReceitaService,
-    ListReceitasService,
-    RetrieveReceitaService,
-    UpdateReceitaService,
-    DeleteReceitaService,
+from apps.receitas.presentation.factories import (
+    create_receita_service,
+    delete_receita_service,
+    list_receitas_service,
+    retrieve_receita_service,
+    update_receita_service,
 )
-from apps.receitas.infrastructure.repositories import ReceitaRepository
 from apps.receitas.presentation.serializers import ReceitaSerializer
 from apps.receitas.domain.exceptions import ValidationException
 
@@ -28,9 +27,6 @@ class ReceitaPagination(PageNumberPagination):
 
 class ReceitaViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
-    
-    def get_repository(self):
-        return ReceitaRepository()
     
     @extend_schema(
         request=ReceitaSerializer,
@@ -46,7 +42,7 @@ class ReceitaViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         
-        service = CreateReceitaService(self.get_repository())
+        service = create_receita_service()
         try:
             receita = service.execute({
                **serializer.validated_data,
@@ -75,7 +71,7 @@ class ReceitaViewSet(ViewSet):
     responses={200: ReceitaSerializer(many=True)}
     )
     def list(self, request):
-        service = ListReceitasService(self.get_repository())
+        service = list_receitas_service()
         receitas = service.execute(request.user).order_by("-date", "-id")
 
         paginator = ReceitaPagination()
@@ -89,7 +85,7 @@ class ReceitaViewSet(ViewSet):
         responses={200: ReceitaSerializer, 404: dict}
     )
     def retrieve(self, request, pk=None):
-        service = RetrieveReceitaService(self.get_repository())
+        service = retrieve_receita_service()
         receita = service.execute(pk, request.user)
 
         if receita is None:
@@ -112,7 +108,7 @@ class ReceitaViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         
-        service = UpdateReceitaService(self.get_repository())
+        service = update_receita_service()
 
         try:
             receita = service.execute(
@@ -139,7 +135,7 @@ class ReceitaViewSet(ViewSet):
         responses={204: None, 404: dict}
     )
     def destroy(self, request, pk=None):
-        service = DeleteReceitaService(self.get_repository())
+        service = delete_receita_service()
         deleted = service.execute(pk, request.user)
 
         if not deleted:

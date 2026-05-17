@@ -1,10 +1,11 @@
 from apps.receitas.domain.validators import ReceitaValidator
 from apps.receitas.domain.entities import ReceitaEntity
+from apps.interfaces import UserScopedRepositoryInterface
 
 
 class CreateReceitaService:
     
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
         
     def execute(self, data):
@@ -19,34 +20,34 @@ class CreateReceitaService:
             user=data.get("user"),
         )
 
-        return self.repository.save(receita)
+        return self.repository.create(receita)
     
 
 class ListReceitasService:
     
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
         
     def execute(self, user):
-        return self.repository.find_by_user(user)
+        return self.repository.list_by_user(user)
 
 
 class RetrieveReceitaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, receita_id, user):
-        return self.repository.find_by_id_and_user(receita_id, user)
+        return self.repository.get_by_id_for_user(receita_id, user)
     
     
 class UpdateReceitaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, receita_id, user, data):
-        receita = self.repository.find_by_id_and_user(receita_id, user)
+        receita = self.repository.get_by_id_for_user(receita_id, user)
 
         if receita is None:
             return None
@@ -67,11 +68,11 @@ class UpdateReceitaService:
 
 class DeleteReceitaService:
 
-    def __init__(self, repository):
+    def __init__(self, repository: UserScopedRepositoryInterface):
         self.repository = repository
 
     def execute(self, receita_id, user):
-        receita = self.repository.find_by_id_and_user(receita_id, user)
+        receita = self.repository.get_by_id_for_user(receita_id, user)
 
         if receita is None:
             return False
