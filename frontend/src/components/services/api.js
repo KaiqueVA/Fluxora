@@ -2,6 +2,7 @@ const API_BASE_URL = 'http://localhost:8000/api'
 const REFRESH_ENDPOINT = '/users/token/refresh/'
 
 let refreshTokenPromise = null
+
 function getAccessToken() {
   return localStorage.getItem('accessToken')
 }
@@ -26,6 +27,7 @@ function saveAuthData(data) {
   if (data.user_id) {
     localStorage.setItem('userId', data.user_id)
   }
+
   if (data.name) {
     localStorage.setItem('userName', data.name)
   }
@@ -65,6 +67,8 @@ function getErrorMessage(data) {
     data?.description?.[0] ||
     data?.category?.[0] ||
     data?.value?.[0] ||
+    data?.target_value?.[0] ||
+    data?.deadline?.[0] ||
     data?.date?.[0] ||
     data?.non_field_errors?.[0] ||
     'Erro ao processar a requisição.'
@@ -79,6 +83,7 @@ function canTryRefresh(endpoint, status, shouldRetry) {
 
   return status === 401 && shouldRetry && !isAuthEndpoint
 }
+
 async function refreshAccessToken() {
   const refreshToken = getRefreshToken()
 
@@ -122,6 +127,7 @@ async function getFreshAccessToken() {
 
   return refreshTokenPromise
 }
+
 async function request(endpoint, options = {}, shouldRetry = true) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -165,7 +171,7 @@ export const authService = {
     return data
   },
 
-  async register(userData) {
+  register(userData) {
     return request('/users/register/', {
       method: 'POST',
       body: JSON.stringify({
@@ -224,6 +230,48 @@ export const despesasService = {
 
   remove(id) {
     return request(`/despesas/despesas/${id}/`, {
+      method: 'DELETE',
+    })
+  },
+}
+
+export const saldoService = {
+  get() {
+    return request('/saldo/')
+  },
+}
+
+export const metasService = {
+  list() {
+    return request('/metas/metas/')
+  },
+
+  create(meta) {
+    return request('/metas/metas/', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: meta.name,
+        description: meta.description || null,
+        target_value: meta.target_value,
+        deadline: meta.deadline,
+      }),
+    })
+  },
+
+  update(id, meta) {
+    return request(`/metas/metas/${id}/`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        name: meta.name,
+        description: meta.description || null,
+        target_value: meta.target_value,
+        deadline: meta.deadline,
+      }),
+    })
+  },
+
+  remove(id) {
+    return request(`/metas/metas/${id}/`, {
       method: 'DELETE',
     })
   },

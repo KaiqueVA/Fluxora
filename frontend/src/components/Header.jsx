@@ -2,7 +2,9 @@ function Header() {
   return (
     <header className="site-header" aria-label="Navegação principal">
       <a className="brand" href="#top" aria-label="Fluxora">
-        <span className="brand-mark">F</span>
+        <span className="brand-mark brand-logo-mark">
+          <img src="/fluxora-icon.png" alt="Fluxora" />
+        </span>
         Fluxora
       </a>
 

@@ -28,7 +28,9 @@ function HeroSection() {
         <div className="platform-preview">
           <div className="preview-topbar">
             <div className="preview-brand">
-              <span>F</span>
+              <span className="preview-logo-mark">
+                <img src="/fluxora-icon.png" alt="Fluxora" />
+              </span>
 
               <div>
                 <strong>Fluxora</strong>

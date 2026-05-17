@@ -161,3 +161,17 @@ button {
   background: #dcfce7;
   border: 1px solid #bbf7d0;
 }
+
+.brand-logo-mark {
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+
+.brand-logo-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}

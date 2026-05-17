@@ -1049,3 +1049,30 @@ html[data-theme='dark'] .comparison-card.is-before span {
   }
 }
 
+.brand-logo-mark {
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+
+.brand-logo-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.preview-logo-mark {
+  overflow: hidden;
+  padding: 0;
+  background: transparent !important;
+}
+
+.preview-logo-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
