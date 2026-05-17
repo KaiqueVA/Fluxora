@@ -1,32 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import PlatformLayout from '../components/platform/PlatformLayout'
 import Topbar from '../components/platform/Topbar'
-
-const currentBalance = 2450
-
-const initialGoals = [
-  {
-    id: 1,
-    title: 'Comprar notebook',
-    description: 'Meta para trocar de computador.',
-    targetValue: 5000,
-    deadline: '2026-12-31',
-  },
-  {
-    id: 2,
-    title: 'Reserva de emergência',
-    description: 'Construir uma reserva para imprevistos.',
-    targetValue: 8000,
-    deadline: '2027-06-30',
-  },
-  {
-    id: 3,
-    title: 'Curso de especialização',
-    description: 'Investimento em desenvolvimento profissional.',
-    targetValue: 3200,
-    deadline: '2026-09-15',
-  },
-]
+import { despesasService, receitasService } from '../components/services/api'
 
 const emptyForm = {
   title: '',
@@ -50,7 +25,17 @@ function formatDate(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR')
 }
 
-function calculateProgress(targetValue) {
+function normalizeCurrencyValue(value) {
+  const numberValue = Number(value)
+
+  if (Number.isNaN(numberValue)) {
+    return 0
+  }
+
+  return numberValue
+}
+
+function calculateProgress(targetValue, currentBalance) {
   if (!targetValue || Number(targetValue) <= 0) {
     return 0
   }
@@ -68,7 +53,7 @@ function calculateProgress(targetValue) {
   return progress
 }
 
-function getRemainingValue(targetValue) {
+function getRemainingValue(targetValue, currentBalance) {
   const remainingValue = Number(targetValue || 0) - currentBalance
 
   if (remainingValue <= 0) {
@@ -148,17 +133,52 @@ function formatDeadlineInfo(deadline) {
 }
 
 function GoalsPage() {
-  const [goals, setGoals] = useState(initialGoals)
+  const [goals, setGoals] = useState([])
   const [formData, setFormData] = useState(emptyForm)
   const [editingGoalId, setEditingGoalId] = useState(null)
   const [message, setMessage] = useState('')
   const [isFormVisible, setIsFormVisible] = useState(false)
   const [expandedGoalIds, setExpandedGoalIds] = useState([])
+  const [currentBalance, setCurrentBalance] = useState(0)
+  const [isBalanceLoading, setIsBalanceLoading] = useState(true)
+  const [balanceError, setBalanceError] = useState('')
+
+  useEffect(() => {
+    async function loadBalanceData() {
+      try {
+        setIsBalanceLoading(true)
+        setBalanceError('')
+
+        const [receitas, despesas] = await Promise.all([
+          receitasService.list(),
+          despesasService.list(),
+        ])
+
+        const totalReceitas = receitas.reduce((total, receita) => {
+          return total + normalizeCurrencyValue(receita.value)
+        }, 0)
+
+        const totalDespesas = despesas.reduce((total, despesa) => {
+          return total + normalizeCurrencyValue(despesa.value)
+        }, 0)
+
+        setCurrentBalance(totalReceitas - totalDespesas)
+      } catch (error) {
+        setBalanceError(
+          error.message || 'Não foi possível carregar o saldo atual.',
+        )
+      } finally {
+        setIsBalanceLoading(false)
+      }
+    }
+
+    loadBalanceData()
+  }, [])
 
   const goalsWithProgress = useMemo(() => {
     return goals.map((goal) => {
-      const progress = calculateProgress(goal.targetValue)
-      const remainingValue = getRemainingValue(goal.targetValue)
+      const progress = calculateProgress(goal.targetValue, currentBalance)
+      const remainingValue = getRemainingValue(goal.targetValue, currentBalance)
       const status = getGoalStatus(progress, goal.deadline)
 
       return {
@@ -168,7 +188,7 @@ function GoalsPage() {
         status,
       }
     })
-  }, [goals])
+  }, [goals, currentBalance])
 
   const activeGoals = goalsWithProgress.filter((goal) => {
     return goal.progress < 100
@@ -345,6 +365,10 @@ function GoalsPage() {
     setMessage('Meta removida.')
   }
 
+  const balanceText = isBalanceLoading
+    ? 'Carregando...'
+    : formatCurrency(currentBalance)
+
   return (
     <PlatformLayout>
       <Topbar
@@ -374,11 +398,13 @@ function GoalsPage() {
           </button>
         </article>
 
+        {balanceError && <p className="goals-message">{balanceError}</p>}
+
         <section className="goals-summary-grid">
           <article className="goals-summary-card is-balance">
             <span>Saldo atual</span>
-            <strong>{formatCurrency(currentBalance)}</strong>
-            <p>Base usada para simular o progresso das metas.</p>
+            <strong>{balanceText}</strong>
+            <p>Calculado com base em receitas e despesas cadastradas.</p>
           </article>
 
           <article className="goals-summary-card">
@@ -408,7 +434,7 @@ function GoalsPage() {
         <section className="goals-mobile-summary-card">
           <div className="goals-mobile-balance">
             <span>Saldo atual</span>
-            <strong>{formatCurrency(currentBalance)}</strong>
+            <strong>{balanceText}</strong>
           </div>
 
           <div className="goals-mobile-summary-row">
@@ -548,7 +574,8 @@ function GoalsPage() {
 
             {goalsWithProgress.length === 0 ? (
               <p className="goals-empty">
-                Nenhuma meta cadastrada até o momento.
+                Nenhuma meta cadastrada até o momento. Crie uma nova meta para
+                acompanhar seu progresso financeiro.
               </p>
             ) : (
               <div className="goals-list">
