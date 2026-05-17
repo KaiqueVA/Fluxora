@@ -1,0 +1,562 @@
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-page: #050b14;
+  --bg-surface: #101c2e;
+  --bg-soft: #0b1524;
+  --bg-input: #0d1a2b;
+
+  --text-main: #eef5ff;
+  --text-body: #dce7f5;
+  --text-muted: #a7b6c9;
+  --text-soft: #8292a8;
+  --text-inverse: #ffffff;
+
+  --primary: #7fd6c4;
+  --primary-soft: rgba(127, 214, 196, 0.13);
+  --primary-light: #7fd6c4;
+
+  --danger: #ff9b9b;
+  --danger-soft: rgba(255, 143, 143, 0.11);
+
+  --border: rgba(190, 210, 235, 0.14);
+  --border-input: rgba(190, 210, 235, 0.16);
+
+  --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --shadow-medium: 0 22px 58px rgba(0, 0, 0, 0.38);
+  --shadow-strong: 0 28px 80px rgba(0, 0, 0, 0.48);
+}
+
+html[data-theme='dark'],
+html[data-theme='dark'] body,
+html[data-theme='dark'] #root {
+  background: var(--bg-page);
+  color: var(--text-body);
+}
+
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(127, 214, 196, 0.12), transparent 28%),
+    radial-gradient(circle at 0% 100%, rgba(59, 117, 180, 0.12), transparent 30%),
+    var(--bg-page);
+}
+
+/* =========================
+   LANDING DARK
+========================= */
+
+html[data-theme='dark'] .site-header {
+  background: rgba(5, 11, 20, 0.82);
+  border-bottom: 1px solid rgba(190, 210, 235, 0.08);
+}
+
+html[data-theme='dark'] .brand,
+html[data-theme='dark'] .hero-copy h1,
+html[data-theme='dark'] .purpose-section h2,
+html[data-theme='dark'] .section-heading h2,
+html[data-theme='dark'] .insight-copy h2,
+html[data-theme='dark'] .access-section h2,
+html[data-theme='dark'] .step-card h3,
+html[data-theme='dark'] .feature-card h3 {
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .site-nav,
+html[data-theme='dark'] .lead,
+html[data-theme='dark'] .purpose-section p,
+html[data-theme='dark'] .feature-card p,
+html[data-theme='dark'] .insight-copy p,
+html[data-theme='dark'] .access-section p,
+html[data-theme='dark'] .metrics-grid span {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .product-visual,
+html[data-theme='dark'] .step-card,
+html[data-theme='dark'] .feature-card,
+html[data-theme='dark'] .metrics-grid article,
+html[data-theme='dark'] .access-section {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    var(--bg-surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+html[data-theme='dark'] .secondary-btn {
+  color: var(--text-main);
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+html[data-theme='dark'] .secondary-btn:hover {
+  color: var(--primary);
+  border-color: rgba(127, 214, 196, 0.36);
+}
+
+html[data-theme='dark'] .primary-btn {
+  color: #06111d;
+  background: var(--primary);
+  box-shadow: 0 18px 36px rgba(127, 214, 196, 0.16);
+}
+
+/* =========================
+   AUTH DARK
+========================= */
+
+html[data-theme='dark'] .auth-page {
+  background: var(--bg-page);
+}
+
+html[data-theme='dark'] .auth-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    var(--bg-surface);
+  border-color: var(--border);
+}
+
+html[data-theme='dark'] .auth-brand,
+html[data-theme='dark'] .auth-header h1,
+html[data-theme='dark'] .auth-form label {
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .auth-header p,
+html[data-theme='dark'] .auth-footer {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .auth-form input {
+  color: var(--text-main);
+  border-color: var(--border-input);
+  background: var(--bg-input);
+}
+
+html[data-theme='dark'] .auth-form input::placeholder {
+  color: var(--text-soft);
+}
+
+html[data-theme='dark'] .auth-form input:focus {
+  border-color: var(--primary);
+  background: #111f33;
+  box-shadow: 0 0 0 4px rgba(127, 214, 196, 0.12);
+}
+
+/* =========================
+   PLATFORM DARK
+========================= */
+
+html[data-theme='dark'] .platform-layout {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(127, 214, 196, 0.12), transparent 28%),
+    radial-gradient(circle at 0% 100%, rgba(59, 117, 180, 0.12), transparent 30%),
+    var(--bg-page);
+}
+
+html[data-theme='dark'] .platform-sidebar {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(127, 214, 196, 0.12), transparent 34%),
+    linear-gradient(180deg, #081626 0%, #050d18 100%);
+  border-right: 1px solid rgba(190, 210, 235, 0.08);
+  box-shadow: 20px 0 44px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme='dark'] .platform-content {
+  background: transparent;
+}
+
+html[data-theme='dark'] .platform-topbar h1 {
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .user-pill,
+html[data-theme='dark'] .theme-toggle {
+  color: var(--text-muted);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    var(--bg-surface);
+  border-color: var(--border);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+html[data-theme='dark'] .theme-toggle:hover {
+  color: var(--primary);
+  border-color: rgba(127, 214, 196, 0.42);
+  background:
+    linear-gradient(180deg, rgba(127, 214, 196, 0.08), rgba(127, 214, 196, 0.035)),
+    var(--bg-surface);
+}
+
+html[data-theme='dark'] .user-avatar {
+  color: #06111d;
+  background: var(--primary);
+}
+
+/* =========================
+   DASHBOARD CLEAN DARK
+========================= */
+
+html[data-theme='dark'] .clean-hero {
+  background:
+    radial-gradient(circle at 90% 8%, rgba(127, 214, 196, 0.22), transparent 34%),
+    linear-gradient(135deg, #10233a 0%, #0b1828 100%);
+  border: 1px solid rgba(127, 214, 196, 0.16);
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] .clean-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.014)),
+    #121b2a;
+  border-color: rgba(190, 210, 235, 0.13);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme='dark'] .clean-metrics div,
+html[data-theme='dark'] .clean-mini-row div,
+html[data-theme='dark'] .clean-commitment,
+html[data-theme='dark'] .clean-transaction,
+html[data-theme='dark'] .clean-empty {
+  background: #0d1624;
+  border-color: rgba(190, 210, 235, 0.1);
+}
+
+html[data-theme='dark'] .clean-meter,
+html[data-theme='dark'] .clean-bar {
+  background: #07111f;
+  border: 1px solid rgba(190, 210, 235, 0.08);
+}
+
+html[data-theme='dark'] .clean-hero .section-label {
+  color: var(--primary);
+}
+
+html[data-theme='dark'] .clean-hero h2,
+html[data-theme='dark'] .clean-balance strong {
+  color: #ffffff;
+}
+
+html[data-theme='dark'] .clean-balance {
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+html[data-theme='dark'] .clean-balance span {
+  color: #d7e3ef;
+}
+
+html[data-theme='dark'] .clean-panel-header h2,
+html[data-theme='dark'] .clean-metrics strong,
+html[data-theme='dark'] .clean-mini-row strong,
+html[data-theme='dark'] .clean-commitment strong,
+html[data-theme='dark'] .clean-category-label strong,
+html[data-theme='dark'] .clean-transaction strong {
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .clean-metrics span,
+html[data-theme='dark'] .clean-mini-row span,
+html[data-theme='dark'] .clean-commitment span,
+html[data-theme='dark'] .clean-commitment p,
+html[data-theme='dark'] .clean-category-label span,
+html[data-theme='dark'] .clean-category-item small,
+html[data-theme='dark'] .clean-transaction span,
+html[data-theme='dark'] .clean-empty {
+  color: var(--text-muted);
+}
+
+/* =========================
+   CARD SURFACES DARK
+========================= */
+
+html[data-theme='dark'] .modern-kpi-card,
+html[data-theme='dark'] .modern-panel,
+html[data-theme='dark'] .revenue-kpi,
+html[data-theme='dark'] .revenue-actions-card,
+html[data-theme='dark'] .revenue-card,
+html[data-theme='dark'] .dashboard-panel,
+html[data-theme='dark'] .stat-card,
+html[data-theme='dark'] .dashboard-kpi,
+html[data-theme='dark'] .dashboard-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.018)),
+    var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+html[data-theme='dark'] .modern-panel,
+html[data-theme='dark'] .revenue-card,
+html[data-theme='dark'] .revenue-actions-card,
+html[data-theme='dark'] .modern-kpi-card,
+html[data-theme='dark'] .revenue-kpi {
+  position: relative;
+}
+
+html[data-theme='dark'] .modern-panel::before,
+html[data-theme='dark'] .revenue-card::before,
+html[data-theme='dark'] .revenue-actions-card::before,
+html[data-theme='dark'] .modern-kpi-card::before,
+html[data-theme='dark'] .revenue-kpi::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(127, 214, 196, 0.075), transparent 34%);
+}
+
+html[data-theme='dark'] .modern-kpi-card:hover,
+html[data-theme='dark'] .modern-panel:hover,
+html[data-theme='dark'] .revenue-card:hover,
+html[data-theme='dark'] .revenue-actions-card:hover,
+html[data-theme='dark'] .revenue-kpi:hover {
+  border-color: rgba(127, 214, 196, 0.26);
+  box-shadow:
+    0 22px 58px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+/* =========================
+   MAIN HIGHLIGHT CARDS DARK
+========================= */
+
+html[data-theme='dark'] .modern-dashboard-hero,
+html[data-theme='dark'] .revenue-kpi.primary {
+  background:
+    radial-gradient(circle at 90% 8%, rgba(127, 214, 196, 0.22), transparent 34%),
+    linear-gradient(135deg, #10233a 0%, #0b1828 100%);
+  border: 1px solid rgba(127, 214, 196, 0.16);
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] .expense-primary {
+  background:
+    radial-gradient(circle at 88% 16%, rgba(255, 194, 194, 0.18), transparent 32%),
+    linear-gradient(135deg, #34101c 0%, #4b1828 100%);
+  border: 1px solid rgba(255, 155, 155, 0.16);
+  box-shadow:
+    0 26px 72px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] .modern-dashboard-hero .section-label,
+html[data-theme='dark'] .revenue-kpi.primary .section-label {
+  color: var(--primary);
+}
+
+html[data-theme='dark'] .modern-dashboard-hero h2,
+html[data-theme='dark'] .modern-balance-card strong,
+html[data-theme='dark'] .revenue-kpi.primary span,
+html[data-theme='dark'] .revenue-kpi.primary p,
+html[data-theme='dark'] .revenue-kpi.primary strong,
+html[data-theme='dark'] .expense-primary span,
+html[data-theme='dark'] .expense-primary p,
+html[data-theme='dark'] .expense-primary strong {
+  color: #ffffff;
+}
+
+/* =========================
+   TEXT DARK
+========================= */
+
+html[data-theme='dark'] .modern-kpi-card strong,
+html[data-theme='dark'] .modern-panel h2,
+html[data-theme='dark'] .modern-bar-label strong,
+html[data-theme='dark'] .modern-transaction strong,
+html[data-theme='dark'] .modern-highlight strong,
+html[data-theme='dark'] .revenue-kpi strong,
+html[data-theme='dark'] .revenue-card h2,
+html[data-theme='dark'] .revenue-actions-header h2,
+html[data-theme='dark'] .revenue-list-item strong,
+html[data-theme='dark'] .revenue-chart-label strong,
+html[data-theme='dark'] .dashboard-kpi strong,
+html[data-theme='dark'] .dashboard-card h2,
+html[data-theme='dark'] .stat-card strong,
+html[data-theme='dark'] .panel-header h2 {
+  color: var(--text-main);
+}
+
+html[data-theme='dark'] .modern-kpi-card span,
+html[data-theme='dark'] .modern-kpi-card p,
+html[data-theme='dark'] .modern-bar-label span,
+html[data-theme='dark'] .modern-bar-item small,
+html[data-theme='dark'] .modern-transaction span,
+html[data-theme='dark'] .modern-highlight p,
+html[data-theme='dark'] .revenue-kpi span,
+html[data-theme='dark'] .revenue-kpi p,
+html[data-theme='dark'] .revenue-list-item span,
+html[data-theme='dark'] .revenue-chart-label span,
+html[data-theme='dark'] .dashboard-kpi span,
+html[data-theme='dark'] .dashboard-kpi p,
+html[data-theme='dark'] .stat-card span,
+html[data-theme='dark'] .stat-card p,
+html[data-theme='dark'] .panel-description {
+  color: var(--text-muted);
+}
+
+/* =========================
+   INNER SURFACES DARK
+========================= */
+
+html[data-theme='dark'] .modern-balance-card,
+html[data-theme='dark'] .modern-highlight,
+html[data-theme='dark'] .modern-empty,
+html[data-theme='dark'] .modern-transaction,
+html[data-theme='dark'] .revenue-empty,
+html[data-theme='dark'] .revenue-list-item,
+html[data-theme='dark'] .cashflow-summary div,
+html[data-theme='dark'] .transaction-item,
+html[data-theme='dark'] .platform-table-row {
+  background: var(--bg-soft);
+  border: 1px solid rgba(190, 210, 235, 0.09);
+}
+
+html[data-theme='dark'] .modern-balance-card {
+  background: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+html[data-theme='dark'] .modern-empty,
+html[data-theme='dark'] .revenue-empty {
+  color: var(--text-muted);
+}
+
+/* =========================
+   BARS / CHARTS DARK
+========================= */
+
+html[data-theme='dark'] .modern-bar-track,
+html[data-theme='dark'] .revenue-chart-track,
+html[data-theme='dark'] .dashboard-comparison-track {
+  background: #07111f;
+  border: 1px solid rgba(190, 210, 235, 0.08);
+}
+
+html[data-theme='dark'] .modern-bar-fill.income,
+html[data-theme='dark'] .revenue-chart-fill,
+html[data-theme='dark'] .dashboard-comparison-fill.income {
+  background: var(--primary);
+}
+
+html[data-theme='dark'] .modern-bar-fill.expense,
+html[data-theme='dark'] .modern-bar-fill.category,
+html[data-theme='dark'] .expense-fill,
+html[data-theme='dark'] .dashboard-comparison-fill.expense {
+  background: var(--danger);
+}
+
+/* =========================
+   FORMS DARK
+========================= */
+
+html[data-theme='dark'] .revenue-form input,
+html[data-theme='dark'] .revenue-form select,
+html[data-theme='dark'] .platform-form input,
+html[data-theme='dark'] .auth-form input {
+  color: var(--text-main);
+  border-color: var(--border-input);
+  background: var(--bg-input);
+}
+
+html[data-theme='dark'] .revenue-form input::placeholder,
+html[data-theme='dark'] .platform-form input::placeholder,
+html[data-theme='dark'] .auth-form input::placeholder {
+  color: var(--text-soft);
+}
+
+html[data-theme='dark'] .revenue-form input:focus,
+html[data-theme='dark'] .revenue-form select:focus,
+html[data-theme='dark'] .platform-form input:focus,
+html[data-theme='dark'] .auth-form input:focus {
+  border-color: var(--primary);
+  background: #111f33;
+  box-shadow: 0 0 0 4px rgba(127, 214, 196, 0.12);
+}
+
+html[data-theme='dark'] .revenue-form select {
+  background-color: var(--bg-input);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+}
+
+html[data-theme='dark'] .secondary-action-button {
+  color: var(--text-muted);
+  border-color: var(--border-input);
+  background: var(--bg-input);
+}
+
+html[data-theme='dark'] .secondary-action-button:hover {
+  color: var(--primary);
+  border-color: rgba(127, 214, 196, 0.42);
+  background: rgba(127, 214, 196, 0.08);
+}
+
+/* =========================
+   STATUS / VALUES DARK
+========================= */
+
+html[data-theme='dark'] .positive {
+  color: var(--primary);
+}
+
+html[data-theme='dark'] .negative {
+  color: var(--danger);
+}
+
+html[data-theme='dark'] .modern-highlight span {
+  color: var(--danger);
+}
+
+html[data-theme='dark'] .revenue-list-value > strong {
+  color: var(--primary);
+}
+
+/* =========================
+   DANGER BUTTONS DARK
+========================= */
+
+html[data-theme='dark'] .revenue-list-value button,
+html[data-theme='dark'] .platform-table-row button {
+  color: #ffb4b4;
+  background: rgba(255, 143, 143, 0.1);
+  border-color: rgba(255, 143, 143, 0.14);
+}
+
+html[data-theme='dark'] .revenue-list-value button:hover,
+html[data-theme='dark'] .platform-table-row button:hover {
+  background: rgba(255, 143, 143, 0.16);
+}
+
+/* =========================
+   RESPONSIVE HELPERS
+========================= */
+
+@media (max-width: 560px) {
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-toggle,
+  .user-pill {
+    flex: 1;
+  }
+}

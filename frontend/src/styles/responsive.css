@@ -1,0 +1,471 @@
+@media (max-width: 1180px) {
+  .modern-dashboard-hero,
+  .modern-dashboard-grid,
+  .modern-dashboard-grid.bottom,
+  .revenue-overview,
+  .revenue-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modern-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modern-balance-card {
+    width: 100%;
+  }
+
+  .revenue-form.compact,
+  .expense-form.compact {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .revenue-form .primary-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1080px) {
+  .purpose-section,
+  .workflow-section,
+  .features-section,
+  .insight-section,
+  .access-section,
+  .hero-section,
+  .site-header {
+    width: min(100% - 40px, 860px);
+  }
+
+  .hero-section {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 48px 0 72px;
+    text-align: center;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-copy h1 {
+    max-width: 760px;
+    margin: 0 auto;
+    font-size: clamp(3rem, 8vw, 5rem);
+  }
+
+  .lead {
+    max-width: 680px;
+    margin: 24px auto 0;
+  }
+
+  .action-row {
+    justify-content: center;
+  }
+
+  .product-visual {
+    justify-self: center;
+    max-width: 520px;
+    min-height: auto;
+    padding: 34px;
+    border-radius: 24px;
+  }
+
+  .phone-frame {
+    width: min(360px, 100%);
+  }
+
+  .purpose-section {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 72px 0 34px;
+    text-align: center;
+  }
+
+  .purpose-section h2,
+  .purpose-section p {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .workflow-section,
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(260px, 340px));
+  }
+
+  .features-section,
+  .insight-section {
+    padding: 72px 0;
+  }
+
+  .insight-section {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .access-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .access-section p {
+    margin: 16px auto 0;
+  }
+
+  .access-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 980px) {
+  .platform-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 20px;
+  }
+
+  .platform-sidebar:hover,
+  .platform-sidebar:focus-within {
+    width: 100%;
+    padding: 20px;
+    box-shadow: none;
+  }
+
+  .platform-brand .brand-mark {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+  }
+
+  .brand-text,
+  .nav-label,
+  .sidebar-status p,
+  .logout-label {
+    width: auto !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  .platform-nav {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .platform-nav a {
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 14px;
+  }
+
+  .platform-nav a.active::before {
+    display: none;
+  }
+
+  .nav-icon,
+  .platform-sidebar:not(:hover):not(:focus-within) .nav-icon {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .sidebar-footer {
+    margin-top: 24px;
+  }
+
+  .sidebar-status {
+    justify-content: flex-start;
+    padding: 0 12px;
+  }
+
+  .logout-button {
+    justify-content: center;
+    padding: 0 14px;
+  }
+
+  .platform-content {
+    padding: 24px;
+  }
+
+  .platform-form .primary-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-card {
+    border-right: 0;
+    padding: 36px 24px;
+  }
+
+  .auth-side {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    position: static;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 0 10px;
+  }
+
+  .site-nav {
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .hero-section {
+    padding: 36px 0 56px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.55rem, 12vw, 3.7rem);
+    line-height: 1;
+  }
+
+  .lead {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+
+  .product-visual {
+    max-width: 430px;
+    padding: 22px;
+  }
+
+  .phone-frame {
+    padding: 16px;
+  }
+
+  .balance-panel strong {
+    font-size: 1.75rem;
+  }
+
+  .purpose-section,
+  .features-section,
+  .insight-section {
+    padding: 56px 0;
+  }
+
+  .purpose-section h2,
+  .section-heading h2,
+  .insight-copy h2,
+  .access-section h2 {
+    font-size: clamp(2.15rem, 10vw, 3rem);
+    line-height: 1.04;
+  }
+
+  .purpose-section p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .workflow-section,
+  .feature-grid {
+    grid-template-columns: minmax(0, 420px);
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .modern-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modern-dashboard-hero,
+  .modern-kpi-card,
+  .modern-panel,
+  .revenue-kpi,
+  .revenue-actions-card,
+  .revenue-card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .modern-transaction,
+  .modern-bar-label,
+  .revenue-actions-header,
+  .revenue-card-header,
+  .revenue-list-item,
+  .revenue-list-value {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .revenue-form.compact,
+  .expense-form.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .secondary-action-button,
+  .revenue-list-value,
+  .revenue-list-value button {
+    width: 100%;
+  }
+
+  .revenue-list-value {
+    text-align: left;
+  }
+}
+
+@media (max-width: 560px) {
+  .platform-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-toggle,
+  .user-pill {
+    flex: 1;
+  }
+
+  .platform-content {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .purpose-section,
+  .workflow-section,
+  .features-section,
+  .insight-section,
+  .access-section,
+  .hero-section,
+  .site-header {
+    width: min(100% - 28px, 420px);
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .site-nav {
+    gap: 18px;
+    font-size: 0.88rem;
+  }
+
+  .hero-section {
+    padding-top: 28px;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.45rem;
+  }
+
+  .product-visual {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .phone-frame {
+    width: 100%;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .cashflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-bars {
+    height: 96px;
+  }
+
+  .step-card,
+  .feature-card,
+  .metrics-grid article,
+  .access-section {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 980px) {
+  .platform-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-sidebar {
+    position: static;
+    height: auto;
+    padding: 20px;
+  }
+
+  .platform-nav {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .platform-nav a.active::before {
+    display: none;
+  }
+
+  .sidebar-footer {
+    margin-top: 24px;
+  }
+
+  .platform-content {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .platform-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .theme-toggle,
+  .user-pill {
+    flex: 1;
+  }
+
+  .platform-content {
+    padding: 18px;
+  }
+}
