@@ -10,8 +10,9 @@
 }
 
 .platform-sidebar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   z-index: 20;
   width: 92px;
   height: 100vh;
@@ -271,6 +272,7 @@
 }
 
 .platform-content {
+  grid-column: 2;
   min-width: 0;
   padding: 36px;
 }
