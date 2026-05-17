@@ -25,6 +25,10 @@ function formatDate(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR')
 }
 
+function getTodayDateValue() {
+  return new Date().toISOString().split('T')[0]
+}
+
 function normalizeNumber(value) {
   const numberValue = Number(value)
 
@@ -33,6 +37,14 @@ function normalizeNumber(value) {
   }
 
   return numberValue
+}
+
+function normalizeApiList(data) {
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  return data?.results || []
 }
 
 function mapGoalFromApi(goal) {
@@ -157,7 +169,10 @@ function GoalsPage() {
   const [goals, setGoals] = useState([])
   const [formData, setFormData] = useState(emptyForm)
   const [editingGoalId, setEditingGoalId] = useState(null)
-  const [message, setMessage] = useState('')
+  const [feedback, setFeedback] = useState({
+    type: '',
+    text: '',
+  })
   const [pageError, setPageError] = useState('')
   const [isFormVisible, setIsFormVisible] = useState(false)
   const [expandedGoalIds, setExpandedGoalIds] = useState([])
@@ -165,6 +180,9 @@ function GoalsPage() {
   const [isBalanceLoading, setIsBalanceLoading] = useState(true)
   const [isGoalsLoading, setIsGoalsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [removingGoalId, setRemovingGoalId] = useState(null)
+
+  const todayDateValue = getTodayDateValue()
 
   async function loadGoals() {
     try {
@@ -172,9 +190,7 @@ function GoalsPage() {
       setPageError('')
 
       const data = await metasService.list()
-      const normalizedGoals = Array.isArray(data)
-        ? data.map(mapGoalFromApi)
-        : data?.results?.map(mapGoalFromApi) || []
+      const normalizedGoals = normalizeApiList(data).map(mapGoalFromApi)
 
       setGoals(normalizedGoals)
     } catch (error) {
@@ -245,6 +261,20 @@ function GoalsPage() {
       })[0]
   }, [goalsWithProgress])
 
+  function showFeedback(type, text) {
+    setFeedback({
+      type,
+      text,
+    })
+  }
+
+  function clearFeedback() {
+    setFeedback({
+      type: '',
+      text: '',
+    })
+  }
+
   function scrollToForm() {
     window.requestAnimationFrame(() => {
       const formElement = document.getElementById('goal-form')
@@ -260,7 +290,7 @@ function GoalsPage() {
 
   function handleOpenForm() {
     setIsFormVisible(true)
-    setMessage('')
+    clearFeedback()
     scrollToForm()
   }
 
@@ -271,12 +301,16 @@ function GoalsPage() {
       ...currentData,
       [name]: value,
     }))
+
+    if (feedback.type === 'error' || feedback.type === 'warning') {
+      clearFeedback()
+    }
   }
 
   function resetForm() {
     setFormData(emptyForm)
     setEditingGoalId(null)
-    setMessage('')
+    clearFeedback()
   }
 
   function handleCloseForm() {
@@ -294,32 +328,47 @@ function GoalsPage() {
     })
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-
+  function validateForm() {
     const numericTargetValue = Number(formData.targetValue)
+    const trimmedTitle = formData.title.trim()
 
-    if (!formData.title.trim()) {
-      setMessage('Informe o nome da meta.')
-      setIsFormVisible(true)
-      return
+    if (!trimmedTitle) {
+      return 'Informe o nome da meta.'
+    }
+
+    if (trimmedTitle.length < 3) {
+      return 'O nome da meta deve ter pelo menos 3 caracteres.'
     }
 
     if (!numericTargetValue || numericTargetValue <= 0) {
-      setMessage('Informe um valor alvo maior que zero.')
-      setIsFormVisible(true)
-      return
+      return 'Informe um valor alvo maior que zero.'
     }
 
     if (!formData.deadline) {
-      setMessage('Informe o prazo da meta.')
+      return 'Informe o prazo da meta.'
+    }
+
+    if (formData.deadline < todayDateValue) {
+      return 'O prazo da meta não pode ser uma data passada.'
+    }
+
+    return ''
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    const validationMessage = validateForm()
+
+    if (validationMessage) {
+      showFeedback('error', validationMessage)
       setIsFormVisible(true)
       return
     }
 
     try {
       setIsSubmitting(true)
-      setMessage('')
+      clearFeedback()
       setPageError('')
 
       const payload = mapGoalToApiPayload(formData)
@@ -333,7 +382,7 @@ function GoalsPage() {
           ),
         )
 
-        setMessage('Meta atualizada com sucesso.')
+        showFeedback('success', 'Meta atualizada com sucesso.')
         setEditingGoalId(null)
         setFormData(emptyForm)
         setIsFormVisible(false)
@@ -346,10 +395,10 @@ function GoalsPage() {
       setGoals((currentGoals) => [normalizedGoal, ...currentGoals])
       setExpandedGoalIds((currentIds) => [normalizedGoal.id, ...currentIds])
       setFormData(emptyForm)
-      setMessage('Meta criada com sucesso.')
       setIsFormVisible(false)
+      showFeedback('success', 'Meta criada com sucesso.')
     } catch (error) {
-      setMessage(error.message || 'Não foi possível salvar a meta.')
+      showFeedback('error', error.message || 'Não foi possível salvar a meta.')
       setIsFormVisible(true)
     } finally {
       setIsSubmitting(false)
@@ -374,13 +423,25 @@ function GoalsPage() {
       description: goal.description || '',
     })
 
-    setMessage('')
+    clearFeedback()
     scrollToForm()
   }
 
-  async function handleRemove(goalId) {
+  async function handleRemove(goalId, goalTitle) {
+    const shouldRemove = window.confirm(
+      `Tem certeza que deseja remover a meta "${goalTitle}"?`,
+    )
+
+    if (!shouldRemove) {
+      showFeedback('warning', 'Remoção cancelada. Nenhuma meta foi excluída.')
+      return
+    }
+
     try {
+      setRemovingGoalId(goalId)
       setPageError('')
+      clearFeedback()
+
       await metasService.remove(goalId)
 
       setGoals((currentGoals) => {
@@ -396,9 +457,11 @@ function GoalsPage() {
         setIsFormVisible(false)
       }
 
-      setMessage('Meta removida.')
+      showFeedback('success', 'Meta removida com sucesso.')
     } catch (error) {
       setPageError(error.message || 'Não foi possível remover a meta.')
+    } finally {
+      setRemovingGoalId(null)
     }
   }
 
@@ -435,9 +498,21 @@ function GoalsPage() {
           </button>
         </article>
 
-        {pageError && <p className="goals-message">{pageError}</p>}
+        {pageError && (
+          <p className="goals-message is-error" role="alert">
+            {pageError}
+          </p>
+        )}
 
-        {!isFormVisible && message && <p className="goals-message">{message}</p>}
+        {feedback.text && !isFormVisible && (
+          <p
+            className={`goals-message is-${feedback.type}`}
+            role={feedback.type === 'error' ? 'alert' : 'status'}
+            aria-live="polite"
+          >
+            {feedback.text}
+          </p>
+        )}
 
         <section className="goals-summary-grid">
           <article className="goals-summary-card is-balance">
@@ -529,7 +604,7 @@ function GoalsPage() {
               </button>
             </div>
 
-            <form className="goals-form" onSubmit={handleSubmit}>
+            <form className="goals-form" onSubmit={handleSubmit} noValidate>
               <label>
                 Nome da meta
                 <input
@@ -538,6 +613,9 @@ function GoalsPage() {
                   placeholder="Ex: Comprar notebook"
                   value={formData.title}
                   onChange={handleChange}
+                  minLength="3"
+                  required
+                  aria-invalid={feedback.type === 'error'}
                 />
               </label>
 
@@ -547,11 +625,13 @@ function GoalsPage() {
                   <input
                     type="number"
                     name="targetValue"
-                    min="0"
+                    min="0.01"
                     step="0.01"
                     placeholder="5000.00"
                     value={formData.targetValue}
                     onChange={handleChange}
+                    required
+                    aria-invalid={feedback.type === 'error'}
                   />
                 </label>
 
@@ -560,8 +640,11 @@ function GoalsPage() {
                   <input
                     type="date"
                     name="deadline"
+                    min={todayDateValue}
                     value={formData.deadline}
                     onChange={handleChange}
+                    required
+                    aria-invalid={feedback.type === 'error'}
                   />
                 </label>
               </div>
@@ -577,8 +660,14 @@ function GoalsPage() {
                 />
               </label>
 
-              {message && isFormVisible && (
-                <p className="goals-message">{message}</p>
+              {feedback.text && isFormVisible && (
+                <p
+                  className={`goals-message is-${feedback.type}`}
+                  role={feedback.type === 'error' ? 'alert' : 'status'}
+                  aria-live="polite"
+                >
+                  {feedback.text}
+                </p>
               )}
 
               <div className="goals-form-actions">
@@ -623,7 +712,9 @@ function GoalsPage() {
             </div>
 
             {isGoalsLoading ? (
-              <p className="goals-empty">Carregando metas...</p>
+              <p className="goals-empty" role="status" aria-live="polite">
+                Carregando metas...
+              </p>
             ) : goalsWithProgress.length === 0 ? (
               <p className="goals-empty">
                 Nenhuma meta cadastrada até o momento. Crie uma nova meta para
@@ -633,6 +724,7 @@ function GoalsPage() {
               <div className="goals-list">
                 {goalsWithProgress.map((goal) => {
                   const isExpanded = expandedGoalIds.includes(goal.id)
+                  const isRemoving = removingGoalId === goal.id
 
                   return (
                     <article
@@ -657,7 +749,10 @@ function GoalsPage() {
                       </div>
 
                       <div className="goal-progress-row">
-                        <div className="goal-progress-bar">
+                        <div
+                          className="goal-progress-bar"
+                          aria-label={`Progresso da meta ${goal.title}`}
+                        >
                           <div style={{ width: `${goal.progress}%` }} />
                         </div>
 
@@ -708,6 +803,7 @@ function GoalsPage() {
                             <button
                               type="button"
                               onClick={() => handleEdit(goal)}
+                              disabled={isRemoving}
                             >
                               Editar
                             </button>
@@ -715,9 +811,10 @@ function GoalsPage() {
                             <button
                               className="is-danger"
                               type="button"
-                              onClick={() => handleRemove(goal.id)}
+                              onClick={() => handleRemove(goal.id, goal.title)}
+                              disabled={isRemoving}
                             >
-                              Remover
+                              {isRemoving ? 'Removendo...' : 'Remover'}
                             </button>
                           </div>
                         </div>

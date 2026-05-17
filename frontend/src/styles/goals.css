@@ -84,7 +84,8 @@ html[data-theme='dark'] .goals-hero {
   box-shadow: 0 14px 34px rgba(127, 214, 196, 0.18);
   transition:
     transform 160ms ease,
-    box-shadow 160ms ease;
+    box-shadow 160ms ease,
+    opacity 160ms ease;
 }
 
 .goals-hero-action:hover {
@@ -273,6 +274,16 @@ html[data-theme='dark'] .goals-mobile-summary-card {
   box-shadow: 0 0 0 4px var(--primary-soft);
 }
 
+.goals-form input[aria-invalid='true'],
+.goals-form textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.goals-form input[aria-invalid='true']:focus,
+.goals-form textarea[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 4px var(--danger-soft);
+}
+
 .goals-message {
   margin: 0;
   padding: 12px 14px;
@@ -281,7 +292,32 @@ html[data-theme='dark'] .goals-mobile-summary-card {
   color: var(--text-muted);
   background: var(--goals-inner-bg);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.goals-message.is-success {
+  color: var(--primary);
+  border-color: rgba(127, 214, 196, 0.26);
+  background: var(--primary-soft);
+}
+
+.goals-message.is-error {
+  color: var(--danger);
+  border-color: rgba(255, 143, 143, 0.32);
+  background: var(--danger-soft);
+}
+
+.goals-message.is-warning {
+  color: #b7791f;
+  border-color: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.12);
+}
+
+html[data-theme='dark'] .goals-message.is-warning {
+  color: #ffd08a;
+  border-color: rgba(245, 158, 11, 0.18);
+  background: rgba(245, 158, 11, 0.1);
 }
 
 .goals-form-actions {
@@ -536,6 +572,25 @@ html[data-theme='dark'] .goal-meta-grid div {
   color: var(--text-muted);
   background: var(--goals-inner-bg);
   text-align: center;
+}
+
+/* =========================
+   INTERACTION STATES
+========================= */
+
+.goals-page button:disabled,
+.goals-page .primary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.goals-page button:focus-visible,
+.goals-page a:focus-visible,
+.goals-page input:focus-visible,
+.goals-page textarea:focus-visible {
+  outline: 3px solid rgba(127, 214, 196, 0.34);
+  outline-offset: 3px;
 }
 
 /* =========================
