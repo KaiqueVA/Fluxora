@@ -21,8 +21,8 @@ class RegisterUserService:
         email: str,
         password: str,
         name: str,
-        birth_date,
-        phone: str,
+        birth_date=None,
+        phone: str | None = None,
         profession: str | None = None,
         monthly_income=None,
     ):
@@ -41,8 +41,10 @@ class RegisterUserService:
 
         PasswordValidator.validate(password)
         UserProfileValidator.validate_name(name)
-        UserProfileValidator.validate_birth_date(birth_date)
-        UserProfileValidator.validate_phone(phone)
+        if birth_date:
+            UserProfileValidator.validate_birth_date(birth_date)
+        if phone:
+            UserProfileValidator.validate_phone(phone)
         UserProfileValidator.validate_profession(profession)
         UserProfileValidator.validate_monthly_income(monthly_income)
 
@@ -81,3 +83,33 @@ class LoginUserService:
             "profession": user.profession,
             "monthly_income": user.monthly_income,
         }
+
+
+class UpdateUserPhoneService:
+
+    def __init__(self, repository: UserRepositoryInterface):
+        self.repository = repository
+
+    def execute(self, user, phone: str):
+        UserProfileValidator.validate_phone(phone)
+        return self.repository.update(user, phone=phone)
+
+
+class UpdateUserProfessionService:
+
+    def __init__(self, repository: UserRepositoryInterface):
+        self.repository = repository
+
+    def execute(self, user, profession: str | None):
+        UserProfileValidator.validate_profession(profession)
+        return self.repository.update(user, profession=profession or None)
+
+
+class UpdateUserMonthlyIncomeService:
+
+    def __init__(self, repository: UserRepositoryInterface):
+        self.repository = repository
+
+    def execute(self, user, monthly_income):
+        UserProfileValidator.validate_monthly_income(monthly_income)
+        return self.repository.update(user, monthly_income=monthly_income)

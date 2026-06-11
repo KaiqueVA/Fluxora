@@ -10,3 +10,7 @@ class UserRepositoryInterface(ABC):
     @abstractmethod
     def get_by_email(self, email: str):
         pass
+
+    @abstractmethod
+    def update(self, user, **fields):
+        pass
