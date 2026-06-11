@@ -39,6 +39,15 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=150)
+    birth_date = models.DateField(null=True, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    profession = models.CharField(max_length=100, null=True, blank=True)
+    monthly_income = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     USERNAME_FIELD = 'email'

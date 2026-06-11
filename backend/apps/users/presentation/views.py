@@ -30,6 +30,10 @@ class RegisterView(APIView):
                 email=serializer.validated_data["email"],
                 password=serializer.validated_data["password"],
                 name=serializer.validated_data["name"],
+                birth_date=serializer.validated_data["birth_date"],
+                phone=serializer.validated_data["phone"],
+                profession=serializer.validated_data.get("profession") or None,
+                monthly_income=serializer.validated_data.get("monthly_income"),
             )
         except (ValidationException, UserAlreadyExistsException) as error:
             return Response(
@@ -41,6 +45,11 @@ class RegisterView(APIView):
             {
                 "id": user.id,
                 "email": user.email,
+                "name": user.name,
+                "birth_date": user.birth_date,
+                "phone": user.phone,
+                "profession": user.profession,
+                "monthly_income": user.monthly_income,
                 "message": "User registered successfully",
             },
             status=status.HTTP_201_CREATED,

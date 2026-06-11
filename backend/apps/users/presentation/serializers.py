@@ -4,6 +4,21 @@ from rest_framework import serializers
 class RegisterSerializer(serializers.Serializer):
     name = serializers.CharField()
     email = serializers.EmailField()
+    birth_date = serializers.DateField()
+    phone = serializers.CharField(max_length=20)
+    profession = serializers.CharField(
+        max_length=100,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+    monthly_income = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        required=False,
+        allow_null=True,
+        min_value=0,
+    )
     password = serializers.CharField(min_length=8, write_only=True)
     confirm_password = serializers.CharField(min_length=8, write_only=True)
 

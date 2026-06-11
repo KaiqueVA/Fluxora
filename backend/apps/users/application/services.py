@@ -8,7 +8,7 @@ from apps.users.domain.exceptions import (
     ValidationException,
 )
 from apps.users.domain.interfaces import UserRepositoryInterface
-from apps.users.domain.validators import PasswordValidator
+from apps.users.domain.validators import PasswordValidator, UserProfileValidator
 
 
 class RegisterUserService:
@@ -16,18 +16,48 @@ class RegisterUserService:
     def __init__(self, repository: UserRepositoryInterface):
         self.repository = repository
 
-    def execute(self, email: str, password: str, name: str):
-        user_entity = UserEntity(email=email, password=password)
+    def execute(
+        self,
+        email: str,
+        password: str,
+        name: str,
+        birth_date,
+        phone: str,
+        profession: str | None = None,
+        monthly_income=None,
+    ):
+        user_entity = UserEntity(
+            email=email,
+            password=password,
+            name=name,
+            birth_date=birth_date,
+            phone=phone,
+            profession=profession,
+            monthly_income=monthly_income,
+        )
 
         if not user_entity.is_valid_email():
             raise ValidationException("Invalid email.")
 
         PasswordValidator.validate(password)
+        UserProfileValidator.validate_name(name)
+        UserProfileValidator.validate_birth_date(birth_date)
+        UserProfileValidator.validate_phone(phone)
+        UserProfileValidator.validate_profession(profession)
+        UserProfileValidator.validate_monthly_income(monthly_income)
 
         if self.repository.get_by_email(email):
             raise UserAlreadyExistsException("Email already exists.")
 
-        return self.repository.create(email=email, password=password, name=name)
+        return self.repository.create(
+            email=email,
+            password=password,
+            name=name,
+            birth_date=birth_date,
+            phone=phone,
+            profession=profession,
+            monthly_income=monthly_income,
+        )
 
 
 class LoginUserService:
@@ -44,4 +74,10 @@ class LoginUserService:
             "access": str(refresh.access_token),
             "refresh": str(refresh),
             "user_id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "birth_date": user.birth_date,
+            "phone": user.phone,
+            "profession": user.profession,
+            "monthly_income": user.monthly_income,
         }
