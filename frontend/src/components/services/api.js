@@ -45,7 +45,11 @@ function clearAuthStorage() {
   localStorage.removeItem('userEmail')
 }
 
-function getAuthHeaders() {
+function getAuthHeaders(skipAuth = false) {
+  if (skipAuth) {
+    return {}
+  }
+
   const token = getAccessToken()
 
   if (!token) {
@@ -57,31 +61,49 @@ function getAuthHeaders() {
   }
 }
 
+function getFieldError(data, fieldName) {
+  const fieldError = data?.[fieldName]
+
+  if (Array.isArray(fieldError)) {
+    return fieldError[0]
+  }
+
+  if (typeof fieldError === 'string') {
+    return fieldError
+  }
+
+  return null
+}
+
 function getErrorMessage(data) {
   return (
     data?.detail ||
-    data?.name?.[0] ||
-    data?.email?.[0] ||
-    data?.password?.[0] ||
-    data?.confirm_password?.[0] ||
-    data?.description?.[0] ||
-    data?.category?.[0] ||
-    data?.value?.[0] ||
-    data?.target_value?.[0] ||
-    data?.deadline?.[0] ||
-    data?.date?.[0] ||
+    getFieldError(data, 'name') ||
+    getFieldError(data, 'email') ||
+    getFieldError(data, 'password') ||
+    getFieldError(data, 'confirm_password') ||
+    getFieldError(data, 'birth_date') ||
+    getFieldError(data, 'phone') ||
+    getFieldError(data, 'profession') ||
+    getFieldError(data, 'monthly_income') ||
+    getFieldError(data, 'description') ||
+    getFieldError(data, 'category') ||
+    getFieldError(data, 'value') ||
+    getFieldError(data, 'target_value') ||
+    getFieldError(data, 'deadline') ||
+    getFieldError(data, 'date') ||
     data?.non_field_errors?.[0] ||
     'Erro ao processar a requisição.'
   )
 }
 
-function canTryRefresh(endpoint, status, shouldRetry) {
+function canTryRefresh(endpoint, status, shouldRetry, skipAuth) {
   const isAuthEndpoint =
     endpoint === '/users/login/' ||
     endpoint === '/users/register/' ||
     endpoint === REFRESH_ENDPOINT
 
-  return status === 401 && shouldRetry && !isAuthEndpoint
+  return status === 401 && shouldRetry && !isAuthEndpoint && !skipAuth
 }
 
 async function refreshAccessToken() {
@@ -129,16 +151,18 @@ async function getFreshAccessToken() {
 }
 
 async function request(endpoint, options = {}, shouldRetry = true) {
+  const { skipAuth = false, headers = {}, ...fetchOptions } = options
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
+    ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
-      ...getAuthHeaders(),
-      ...options.headers,
+      ...getAuthHeaders(skipAuth),
+      ...headers,
     },
   })
 
-  if (canTryRefresh(endpoint, response.status, shouldRetry)) {
+  if (canTryRefresh(endpoint, response.status, shouldRetry, skipAuth)) {
     await getFreshAccessToken()
 
     return request(endpoint, options, false)
@@ -155,8 +179,11 @@ async function request(endpoint, options = {}, shouldRetry = true) {
 
 export const authService = {
   async login(credentials) {
+    clearAuthStorage()
+
     const data = await request('/users/login/', {
       method: 'POST',
+      skipAuth: true,
       body: JSON.stringify({
         email: credentials.email,
         password: credentials.password,
@@ -174,17 +201,69 @@ export const authService = {
   register(userData) {
     return request('/users/register/', {
       method: 'POST',
+      skipAuth: true,
       body: JSON.stringify({
         name: userData.name,
         email: userData.email,
         password: userData.password,
         confirm_password: userData.confirm_password,
+        birth_date: userData.birth_date || null,
+        phone: userData.phone || '',
+        profession: userData.profession || null,
+        monthly_income:
+          userData.monthly_income === '' || userData.monthly_income === undefined
+            ? null
+            : userData.monthly_income,
       }),
     })
   },
 
   logout() {
     clearAuthStorage()
+  },
+
+  isAuthenticated() {
+    return Boolean(getAccessToken())
+  },
+}
+
+export const userProfileService = {
+  getPhone() {
+    return request('/users/phone/')
+  },
+
+  updatePhone(phone) {
+    return request('/users/phone/', {
+      method: 'PATCH',
+      body: JSON.stringify({ phone }),
+    })
+  },
+
+  getProfession() {
+    return request('/users/profession/')
+  },
+
+  updateProfession(profession) {
+    return request('/users/profession/', {
+      method: 'PATCH',
+      body: JSON.stringify({ profession: profession || null }),
+    })
+  },
+
+  getMonthlyIncome() {
+    return request('/users/monthly-income/')
+  },
+
+  updateMonthlyIncome(monthlyIncome) {
+    return request('/users/monthly-income/', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        monthly_income:
+          monthlyIncome === '' || monthlyIncome === undefined
+            ? null
+            : monthlyIncome,
+      }),
+    })
   },
 }
 
