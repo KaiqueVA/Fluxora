@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { authService } from '../services/api'
 
 const navItems = [
   {
@@ -26,18 +27,18 @@ const navItems = [
     label: 'Comprovantes',
     icon: '◈',
   },
+  {
+    path: '/perfil',
+    label: 'Perfil',
+    icon: '◷',
+  },
 ]
 
-function Sidebar({ isOpen = false, onClose = () => { } }) {
+function Sidebar({ isOpen = false, onClose = () => {} }) {
   const navigate = useNavigate()
 
   function handleLogout() {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('userId')
-    localStorage.removeItem('userName')
-    localStorage.removeItem('userEmail')
-
+    authService.logout()
     onClose()
     navigate('/login')
   }
